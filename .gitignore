@@ -1,0 +1,6 @@
+generated/
+exports/
+.studio/
+node_modules/
+.toolchain/
+.DS_Store

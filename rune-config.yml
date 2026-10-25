@@ -1,0 +1,4 @@
+model:
+  name: Rune starter
+  version: '1.0.0'
+  defaultSerialisationFormat: JSON

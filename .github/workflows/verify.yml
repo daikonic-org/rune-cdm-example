@@ -1,0 +1,47 @@
+name: Verify workspace
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: project
+      - name: Read pinned toolchain
+        id: toolchain
+        working-directory: project
+        run: |
+          node --input-type=module <<'NODE' >> "$GITHUB_OUTPUT"
+          import { readFileSync } from 'node:fs';
+          const config = JSON.parse(readFileSync('.rune-toolchain.json', 'utf8'));
+          for (const [key, value] of Object.entries(config)) console.log(`${key}=${value}`);
+          NODE
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.toolchain.outputs.repository }}
+          ref: ${{ steps.toolchain.outputs.commit }}
+          path: rune-langium
+      - uses: pnpm/action-setup@v6
+        with:
+          version: ${{ steps.toolchain.outputs.pnpm }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ steps.toolchain.outputs.node }}
+          cache: pnpm
+          cache-dependency-path: rune-langium/pnpm-lock.yaml
+      - name: Build native toolchain
+        working-directory: rune-langium
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter '@rune-langium/cli...' run build
+      - name: Check workspace and expected outputs
+        working-directory: project
+        env:
+          RUNE_TOOLCHAIN: ${{ github.workspace }}/rune-langium
+        run: node scripts/check.mjs
