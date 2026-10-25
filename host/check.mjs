@@ -87,12 +87,16 @@ try {
   assert.equal(invoke(), '2024-03-01');
   clock = new Date('2025-01-01T00:30:00+14:00');
   assert.equal(invoke(), '2024-12-31');
+  clock = new Date('+010000-01-01T00:00:00.000Z');
+  assert.equal(invoke(), '+010000-01-01');
+  clock = new Date('-000001-12-31T00:00:00.000Z');
+  assert.equal(invoke(), '-000001-12-31');
   const beforeInvalid = calls;
   clock = new Date('invalid');
   assert.throws(() => invoke(), /invalid instant/);
   assert.equal(calls, beforeInvalid + 1);
   console.log(
-    'PASS Today: explicit provider binding, leap day, UTC midnight/year boundary, invalid clock and missing-provider checks.'
+    'PASS Today: explicit provider binding, leap day, UTC midnight/year boundary, expanded ISO years, invalid clock and missing-provider checks.'
   );
 } finally {
   await rm(scratch, { recursive: true, force: true });

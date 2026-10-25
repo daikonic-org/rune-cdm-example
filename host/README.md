@@ -26,7 +26,7 @@ RUNE_TOOLCHAIN=../rune-langium node host/check.mjs
 The explicit runner strictly compiles the handwritten TypeScript, registers its
 callback with the canonical project runtime, generates and strictly compiles the
 Rune caller, and binds the generated module to that runtime. Tests cover leap
-day, UTC midnight, an offset crossing the year boundary, invalid clock values,
+day, UTC midnight, an offset crossing the year boundary, expanded ISO years, invalid clock values,
 wrong symbol identities, and missing provider registration. The compiler helper
 is shared with the main workspace checker; there is no second Rune evaluator.
 

@@ -19,7 +19,8 @@ export function createUtcClockProvider(now: () => Date = () => new Date()): Impl
       if (args.length !== 0) throw new TypeError('Today takes no arguments.');
       const instant = now();
       if (!Number.isFinite(instant.getTime())) throw new TypeError('The clock returned an invalid instant.');
-      return instant.toISOString().slice(0, 10);
+      const iso = instant.toISOString();
+      return iso.slice(0, iso.indexOf('T'));
     }
   };
 }
