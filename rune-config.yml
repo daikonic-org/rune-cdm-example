@@ -1,4 +1,4 @@
 model:
-  name: Rune starter
+  name: CDM example
   version: '1.0.0'
   defaultSerialisationFormat: JSON

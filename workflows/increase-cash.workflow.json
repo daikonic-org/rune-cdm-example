@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "increase-cash",
+  "name": "Increase cash",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "IncreaseCash"
+  },
+  "inputs": {
+    "cash": {
+      "kind": "example",
+      "exampleId": "cash-input"
+    },
+    "change": {
+      "kind": "literal",
+      "value": 250
+    },
+    "currency": {
+      "kind": "literal",
+      "value": "USD"
+    }
+  },
+  "outputs": {
+    "result": {
+      "name": "increasedCash",
+      "type": {
+        "model": "cdm",
+        "namespace": "cdm.observable.asset",
+        "kind": "Data",
+        "name": "Money"
+      }
+    }
+  }
+}

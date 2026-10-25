@@ -1,12 +1,22 @@
 schemaVersion: 1
 sources:
   - model/**/*.rosetta
+references:
+  cdm:
+    repository: https://github.com/finos/common-domain-model
+    release: 7.8.0
 targets:
   typescript:
     generator: typescript
     output: generated/typescript
+    namespaces:
+      - example.starter
+      - example.cdm
     options:
       layout: single-file
   schema:
     generator: json-schema
     output: generated/schema
+    namespaces:
+      - example.starter
+      - example.cdm

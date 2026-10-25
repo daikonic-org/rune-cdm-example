@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "cash-input",
+  "name": "Single cash amount",
+  "type": {
+    "model": "cdm",
+    "namespace": "cdm.base.math",
+    "kind": "Data",
+    "name": "Schedule"
+  },
+  "payload": "examples/cash.json",
+  "codec": "json",
+  "expected": "fixtures/expected/increased-cash.json"
+}

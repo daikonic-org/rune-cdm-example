@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "cdm",
+    "namespace": "cdm.observable.asset",
+    "kind": "Data",
+    "name": "Money"
+  },
+  "columns": 2,
+  "fields": {
+    "value": {
+      "order": 0,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "unit": {
+      "order": 1,
+      "span": 1
+    }
+  }
+}

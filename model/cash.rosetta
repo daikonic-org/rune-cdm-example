@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm
+version "1.0.0"
+
+import cdm.observable.asset.*
+import cdm.base.math.*
+
+func IncreaseCash: <"Use the released CDM UpdateAmount function to increase one supplied amount and produce Money in the chosen currency.">
+  inputs:
+    cash Schedule (1..1)
+    currency string (1..1)
+    change number (1..1)
+  output:
+    result Money (1..1)
+  condition SingleCashValue:
+    cash -> value exists and cash -> datedValue is absent
+  set result: Money {
+    value: UpdateAmount(cash -> value, change, QuantityChangeDirectionEnum -> Increase),
+    unit: UnitType { currency: currency }
+  }
