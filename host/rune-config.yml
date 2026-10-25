@@ -1,0 +1,4 @@
+model:
+  name: CDM clock provider
+  version: '1.0.0'
+  defaultSerialisationFormat: JSON

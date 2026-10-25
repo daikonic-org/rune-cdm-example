@@ -12,6 +12,7 @@ targets:
     namespaces:
       - example.starter
       - example.cdm
+      - example.cdm.implementation
     options:
       layout: single-file
   schema:
@@ -20,3 +21,16 @@ targets:
     namespaces:
       - example.starter
       - example.cdm
+      - example.cdm.implementation
+overrides:
+  - kind: declaration
+    source:
+      model: cdm
+      namespace: cdm.base.datetime
+      kind: RosettaFunction
+      name: PopOffDateList
+    replacement:
+      model: local
+      namespace: example.cdm.implementation
+      kind: RosettaFunction
+      name: PopOffDateListRune

@@ -1,0 +1,44 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm.implementation
+version "1.0.0"
+
+import cdm.base.datetime.*
+
+type DateListPrefix:
+  leadingDates date (0..*)
+  finalDate date (1..1)
+
+func DateListChunk:
+  inputs:
+    value date (1..1)
+  output:
+    result DateListPrefix (1..1)
+  set result: DateListPrefix { leadingDates: [], finalDate: value }
+
+func PopOffDateListRune: <"Remove the final element by position, retaining the order and any earlier duplicate dates.">
+  inputs:
+    dates date (0..*)
+  output:
+    newList date (0..*)
+  alias chunks:
+    dates extract [DateListChunk(item)]
+  set newList:
+    (chunks reduce left, right [
+      DateListPrefix {
+        leadingDates: [left -> leadingDates, left -> finalDate, right -> leadingDates] flatten,
+        finalDate: right -> finalDate
+      }
+    ]) -> leadingDates
+
+type DateListExample:
+  dates date (0..*)
+
+func TrimLastDate: <"Call the original CDM function. The workspace mapping supplies its local Rune implementation.">
+  inputs:
+    input DateListExample (1..1)
+  output:
+    result DateListExample (1..1)
+  set result: DateListExample {
+    dates: PopOffDateList(input -> dates)
+  }

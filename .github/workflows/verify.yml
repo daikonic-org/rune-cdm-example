@@ -44,4 +44,7 @@ jobs:
         working-directory: project
         env:
           RUNE_TOOLCHAIN: ${{ github.workspace }}/rune-langium
-        run: node scripts/check.mjs
+        run: |
+          node scripts/check.mjs
+          node scripts/check-rune-implementation.mjs
+          node host/check.mjs

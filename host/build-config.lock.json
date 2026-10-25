@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "configHash": "acb36fcbaee529982c22d7c1d4bcd3435434876fe177ef0c33a746c80b3a289c",
+  "toolchain": {
+    "@rune-langium/core": "0.1.0",
+    "@rune-langium/codegen": "0.1.0",
+    "langium": "4.4.0"
+  },
+  "references": {
+    "cdm": {
+      "repository": "https://github.com/finos/common-domain-model",
+      "release": "7.8.0",
+      "commit": "5b852ed61573467c8f8e6bb5cc02779a70df032d",
+      "manifest": "https://www.daikonic.dev/curated/cdm/artifacts/cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d/manifest.json",
+      "cohort": "cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d",
+      "checksum": "5be089298329b373cd538bb979e97af8d7944e64ad3aaf0b205761ee4eced93f",
+      "dependencies": {
+        "rune-dsl": "10.15.1",
+        "fpml": "3.8.0"
+      }
+    },
+    "fpml": {
+      "repository": "https://github.com/rosetta-models/rune-fpml",
+      "release": "3.8.0",
+      "commit": "ab92e75df45e882e6775a5ce94dc6f520fe446f6",
+      "manifest": "https://www.daikonic.dev/curated/fpml/artifacts/cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d/manifest.json",
+      "cohort": "cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d",
+      "checksum": "291f58621665d0b9329a127ec1db78ce4c5f87e1005680e1139d70cf1d4429c8",
+      "dependencies": {
+        "rune-dsl": "10.15.1"
+      }
+    },
+    "rune-dsl": {
+      "repository": "https://github.com/finos/rune-dsl",
+      "release": "10.15.1",
+      "commit": "4fa22a75f957940ee2c70a6ead5d53597dbd97a1",
+      "manifest": "https://www.daikonic.dev/curated/rune-dsl/artifacts/cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d/manifest.json",
+      "cohort": "cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d",
+      "checksum": "10310fd48c2a385fead5ef02a46ec92ad4f5d5b477e5d0f03e4225c57bb9eaec",
+      "dependencies": {}
+    }
+  }
+}

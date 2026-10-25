@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.implementation",
+    "kind": "Data",
+    "name": "DateListExample"
+  },
+  "columns": 1,
+  "fields": {
+    "dates": {
+      "order": 0,
+      "span": 1
+    }
+  }
+}

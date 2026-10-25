@@ -1,0 +1,4 @@
+generated/
+exports/
+.studio/
+node_modules/
