@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "date-list-input",
+  "name": "Dates with a repeated final value",
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.implementation",
+    "kind": "Data",
+    "name": "DateListExample"
+  },
+  "payload": "examples/date-list.json",
+  "codec": "json",
+  "expected": "fixtures/expected/date-list-prefix.json"
+}

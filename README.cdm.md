@@ -5,6 +5,15 @@ The starter's **Double quote** workflow stays available. **Increase cash** adds 
 released CDM reference, an original local Rune function, input data, expected
 output, and saved form layouts.
 
+Two further examples demonstrate real `[codeImplementation]` integration:
+
+- [Local Rune replacement](README.rune-implementation.md): the saved
+  **Remove final date with local Rune** workflow calls the original CDM
+  `PopOffDateList` symbol through an explicit declaration mapping.
+- [Handwritten TypeScript provider](host/README.md): a separate host workspace
+  binds CDM `Today` to an explicit UTC clock provider. Its runner registers the
+  provider; the browser does not load executable code from this repository.
+
 ## Run the CDM workflow
 
 Open this repository as a workspace in [Rune Studio](https://www.daikonic.dev/rune-studio/studio/).

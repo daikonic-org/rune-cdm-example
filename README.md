@@ -37,9 +37,12 @@ repositories; later template changes are not pulled automatically.
 
 Generated code, ordinary exports, installed dependencies, and private Studio
 state are ignored by Git. Credentials and personal panel state do not belong in
-the repository. This repository was generated from `daikonic-org/rune-starter`; its shared checker
-and CI are inherited without modification. See the [CDM guide](README.cdm.md)
-for the additional reference configuration, lockfile, inputs, and workflow.
+the repository. This repository was generated from `daikonic-org/rune-starter`. Its checker and CI
+are extended here to cover CDM implementations. See the [CDM guide](README.cdm.md)
+for the reference configuration and amount workflow, the [Rune implementation](README.rune-implementation.md)
+for a local declaration replacement, the [bundled native example](README.native-implementation.md)
+for standalone TypeScript/Python Today, and the [TypeScript host example](host/README.md)
+for explicit provider registration.
 
 ## Check locally
 
@@ -56,12 +59,12 @@ cd ../rune-cdm-example
 RUNE_TOOLCHAIN=../rune-langium node scripts/check.mjs
 ```
 
-The checker uses the shared project runtime to build every named target, reads
+The main checker uses the shared project runtime to build every named target, reads
 portable records through the canonical schemas, strictly compiles the generated
 TypeScript, validates workflow inputs with the generated schema, and compares
 execution results with the expected fixture. It supports the saved-example and
 literal bindings used by these sample workflows. GitHub Actions runs the same
-checker against the pinned toolchain.
+checker and the separate host-provider checks against the pinned toolchain.
 
 To build an individual target from the toolchain checkout:
 

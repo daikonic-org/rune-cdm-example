@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "trim-last-date",
+  "name": "Remove final date with local Rune",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm.implementation",
+    "kind": "RosettaFunction",
+    "name": "TrimLastDate"
+  },
+  "inputs": {
+    "input": {
+      "kind": "example",
+      "exampleId": "date-list-input"
+    }
+  },
+  "outputs": {
+    "result": {
+      "name": "remainingDates",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm.implementation",
+        "kind": "Data",
+        "name": "DateListExample"
+      }
+    }
+  }
+}

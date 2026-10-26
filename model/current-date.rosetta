@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm
+version "1.0.0"
+
+import cdm.base.datetime.*
+
+func ReadUtcToday: <"Calls the generator's bundled implementation of CDM Today.">
+  output:
+    result date (1..1)
+  set result: Today()

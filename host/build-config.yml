@@ -1,0 +1,23 @@
+schemaVersion: 1
+sources:
+  - model/**/*.rosetta
+references:
+  cdm:
+    repository: https://github.com/finos/common-domain-model
+    release: 7.8.0
+overrides:
+  - kind: implementation
+    source:
+      model: cdm
+      namespace: cdm.base.datetime
+      kind: RosettaFunction
+      name: Today
+    provider: example.utc-clock
+targets:
+  typescript:
+    generator: typescript
+    output: generated/typescript
+    namespaces:
+      - example.host
+    options:
+      layout: single-file
