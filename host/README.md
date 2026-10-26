@@ -4,6 +4,10 @@ This is a separate, small workspace demonstrating a genuine host responsibility:
 reading the current date. It pins the same CDM release as the main example and
 needs no Java, OpenGamma, network time service, or financial calendar library.
 
+The [main native example](../README.native-implementation.md) needs no provider:
+the generator bundles TypeScript and Python defaults. This separate workspace
+deliberately overrides that default with an explicitly installed, injectable clock.
+
 `model/clock.rosetta` calls the original `cdm.base.datetime.Today` declaration,
 which is marked `[codeImplementation]`. Its `build-config.yml` explicitly maps
 that exact model/namespace/kind/name identity to the provider ID

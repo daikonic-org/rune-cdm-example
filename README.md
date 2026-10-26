@@ -40,7 +40,8 @@ state are ignored by Git. Credentials and personal panel state do not belong in
 the repository. This repository was generated from `daikonic-org/rune-starter`. Its checker and CI
 are extended here to cover CDM implementations. See the [CDM guide](README.cdm.md)
 for the reference configuration and amount workflow, the [Rune implementation](README.rune-implementation.md)
-for a local declaration replacement, and the [TypeScript host example](host/README.md)
+for a local declaration replacement, the [bundled native example](README.native-implementation.md)
+for standalone TypeScript/Python Today, and the [TypeScript host example](host/README.md)
 for explicit provider registration.
 
 ## Check locally

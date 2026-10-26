@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 Daikonic contributors
 import type { ImplementationProvider } from '@rune-langium/project-runtime';
+import { Temporal } from '@js-temporal/polyfill';
 
 /** Explicit host policy: Today means the UTC calendar date. Tests inject the clock. */
 export function createUtcClockProvider(now: () => Date = () => new Date()): ImplementationProvider {
@@ -20,7 +21,7 @@ export function createUtcClockProvider(now: () => Date = () => new Date()): Impl
       const instant = now();
       if (!Number.isFinite(instant.getTime())) throw new TypeError('The clock returned an invalid instant.');
       const iso = instant.toISOString();
-      return iso.slice(0, iso.indexOf('T'));
+      return Temporal.PlainDate.from(iso.slice(0, iso.indexOf('T')));
     }
   };
 }

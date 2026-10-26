@@ -22,7 +22,7 @@ try {
   );
   const { createUtcClockProvider } = requireProvider(join(scratch, 'provider/utc-clock.js'));
   const beforeLive = new Date().toISOString().slice(0, 10);
-  const liveDate = createUtcClockProvider().invoke([]);
+  const liveDate = createUtcClockProvider().invoke([]).toString();
   const afterLive = new Date().toISOString().slice(0, 10);
   assert.ok(liveDate === beforeLive || liveDate === afterLive);
   let clock = new Date('2024-02-29T23:59:59.999Z'),
@@ -82,15 +82,16 @@ try {
   const invoke = module[fn.exportName ?? fn.name];
   assert.throws(() => invoke(), /bound|implementation|runtime/i);
   codegen.bindGeneratedProjectModule(module, graph.bindings);
-  assert.equal(invoke(), '2024-02-29');
+  assert.equal(Object.prototype.toString.call(invoke()), '[object Temporal.PlainDate]');
+  assert.equal(invoke().toString(), '2024-02-29');
   clock = new Date('2024-03-01T00:00:00.000Z');
-  assert.equal(invoke(), '2024-03-01');
+  assert.equal(invoke().toString(), '2024-03-01');
   clock = new Date('2025-01-01T00:30:00+14:00');
-  assert.equal(invoke(), '2024-12-31');
+  assert.equal(invoke().toString(), '2024-12-31');
   clock = new Date('+010000-01-01T00:00:00.000Z');
-  assert.equal(invoke(), '+010000-01-01');
+  assert.equal(invoke().toString(), '+010000-01-01');
   clock = new Date('-000001-12-31T00:00:00.000Z');
-  assert.equal(invoke(), '-000001-12-31');
+  assert.equal(invoke().toString(), '-000001-12-31');
   const beforeInvalid = calls;
   clock = new Date('invalid');
   assert.throws(() => invoke(), /invalid instant/);

@@ -35,6 +35,9 @@ jobs:
           node-version: ${{ steps.toolchain.outputs.node }}
           cache: pnpm
           cache-dependency-path: rune-langium/pnpm-lock.yaml
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
       - name: Build native toolchain
         working-directory: rune-langium
         run: |
@@ -47,4 +50,5 @@ jobs:
         run: |
           node scripts/check.mjs
           node scripts/check-rune-implementation.mjs
+          node scripts/check-native-implementation.mjs
           node host/check.mjs
