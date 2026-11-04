@@ -66,10 +66,10 @@ try {
     new Map([['build-config.yml', JSON.stringify({ ...snapshot.project.build, overrides })]]),
     runtime.validateProjectTarget
   );
-  const unavailable = await compile(removed, 'without-override');
-  assert.throws(() => unavailable({ dates: [a, b, b] }), /implemented|implementation|unavailable/i);
+  const native = await compile(removed, 'without-override');
+  assert.deepEqual(JSON.parse(JSON.stringify(native({ dates: [a, b, b] }))), { dates: [a, b] });
   console.log(
-    'PASS PopOffDateList: order, duplicates, empty/singleton/absent/null lists, unchanged input and removed-override checks.'
+    'PASS PopOffDateList: order, duplicates, empty/singleton/absent/null lists, unchanged input and native fallback after override removal.'
   );
 } finally {
   await rm(scratch, { recursive: true, force: true });

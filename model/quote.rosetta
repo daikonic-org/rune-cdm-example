@@ -12,9 +12,11 @@ func Double:
 
 typeAlias Amount: number
 
+typeAlias CurrencyCode: string
+
 type Quote:
   amount Amount (1..1)
-  currency string (1..1)
+  currency CurrencyCode (1..1)
 
 func DoubleExample:
   inputs:

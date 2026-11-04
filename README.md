@@ -76,3 +76,20 @@ node packages/cli/dist/index.js build --project ../rune-cdm-example --target sch
 This example demonstrates local Rune execution, not financial scheduling or
 calendar behavior. Original workspace content is MIT licensed; Rune Studio is
 source-available under its own license.
+
+## Resource-backed currency enum
+
+`Quote.currency` uses the local `CurrencyCode` alias. The resource mapping in
+`build-config.yml` materializes the pinned list in `resources/currency.json` as
+an in-memory Rune enum. The same enum supplies generated types, validation and
+the searchable Currency form control; wire values remain codes such as `USD`.
+This works offline and does not require CDM's ISO currency enum.
+
+To pull the configured upstream list again using the shared verified Git reader:
+
+```sh
+RUNE_TOOLCHAIN=../rune-langium node scripts/pull-currency-list.mjs
+```
+
+The script retains the configured commit; changing the source pin is an explicit
+project configuration change. See `THIRD_PARTY_NOTICES.md` for its origin/license.
