@@ -57,9 +57,10 @@ namespace selections. Other configured namespaces and override entries remain.
 
 The saved workflow calls `TrimLastDate`, whose authored source calls the
 **original** `PopOffDateList` symbol. The project resolver applies the mapping
-while composing the effective model. Removing the mapping makes that call
-unavailable even though the local replacement file is still present. The
-curated reference source is never edited.
+while composing the effective model. With the current pinned toolchain, removing
+the mapping selects the bundled native `PopOffDateList` implementation instead.
+The checker verifies that fallback as well as the local Rune implementation.
+The curated reference source is never edited.
 
 ## How the Rune body preserves duplicate dates
 
