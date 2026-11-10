@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "fixed-leg-dates",
+  "name": "Generate the fixed-leg accrual schedule",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "GenerateFixedLegSchedule"
+  },
+  "inputs": {
+    "dates": {
+      "kind": "example",
+      "exampleId": "fixed-leg-dates"
+    }
+  },
+  "outputs": {
+    "periods": {
+      "name": "periods",
+      "type": {
+        "model": "cdm",
+        "namespace": "cdm.product.common.schedule",
+        "kind": "Data",
+        "name": "CalculationPeriodData"
+      }
+    }
+  }
+}

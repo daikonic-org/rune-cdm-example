@@ -1,88 +1,55 @@
-# CDM cash example
+# CDM example workflows
 
-This repository extends the [Rune starter template](https://github.com/daikonic-org/rune-starter).
-The starter's **Double quote** workflow stays available. **Increase cash** adds a
-released CDM reference, an original local Rune function, input data, expected
-output, and saved form layouts.
+Open the **CDM example** workspace in Rune Studio, let the pinned reference
+models load, then choose a **Saved workflow** in **Prototype** and select **Execute**.
+Each workflow loads its saved inputs and displays the result.
 
-Two further examples demonstrate real `[codeImplementation]` integration:
+## One swap, three workflows
 
-- [Local Rune replacement](README.rune-implementation.md): the saved
-  **Remove final date with local Rune** workflow calls the original CDM
-  `PopOffDateList` symbol through an explicit declaration mapping.
-- [Handwritten TypeScript provider](host/README.md): a separate host workspace
-  binds CDM `Today` to an explicit UTC clock provider. Its runner registers the
-  provider; the browser does not load executable code from this repository.
+| Saved workflow | Input | CDM functions | Result |
+| --- | --- | --- | --- |
+| **Check the vanilla swap** | Original FpML vanilla-swap `TradeState` | `Qualify_InterestRate_IRSwap_FixedFloat` | `true` after structural input validation |
+| **Generate the fixed-leg accrual schedule** | Fixed-leg `CalculationPeriodDates` from the same trade | `CalculationPeriods` | Five annual accrual periods from November 6, 2018 to November 6, 2023 |
+| **Calculate fixed-leg coupons** | Fixed `InterestRatePayout` from the same trade | `CalculationPeriods`, `FixedAmountCalculation`, and `ResolveAdjustableDate` | Five SEK 60,800 coupon amounts with payment dates |
 
-## Run the CDM workflow
+The first workflow validates the typed input and checks its CDM product
+classification. The second uses the accrual schedule implementation delivered in
+the pinned CDM bundle. The third applies the saved SEK 10 million notional,
+0.608% fixed rate, and 30/360 convention to each period. Its Rune precondition
+limits it to one fixed coupon per accrual period, paid at period end without
+a lag, custom payment schedule, or business centers.
 
-Open this repository as a workspace in [Rune Studio](https://www.daikonic.dev/rune-studio/studio/).
-Allow its pinned reference models to load, then open **Prototype** and choose
-**Increase cash** from **Saved workflow**. Choose **Execute**.
+The accrual periods keep the sample's unadjusted interior boundaries.
+For payments the sample specifies Modified Following with no business centers,
+so the curated weekend adjustment moves the November 2021 and 2022 payments
+to November 8 and November 7 respectively. The result models the fixed leg only.
 
-The workflow binds these inputs:
+The original trade payload is preserved byte for byte in
+`examples/vanilla-swap.json`. The two smaller input examples reuse its fixed-leg
+data, with the existing quantity and price values inlined for the standalone
+payout. See the [source fixture and transformation notes](THIRD_PARTY_NOTICES.md).
 
-| Parameter | Type | Value |
-| --- | --- | --- |
-| cash | CDM `cdm.base.math.Schedule` | `{ "value": 1000 }` |
-| currency | Rune string | `"USD"` |
-| change | Rune number | `250` |
+## Cash amount and implementation examples
 
-The local function `example.cdm.IncreaseCash` calls the actual upstream
-`cdm.base.math.UpdateAmount` function with its `Increase` direction, then returns
-CDM `cdm.observable.asset.Money`:
+**Increase cash** calls the upstream `cdm.base.math.UpdateAmount`. With the
+saved cash value of 1,000, USD currency, and a change of 250, it returns a CDM
+`Money` value of USD 1,250. The input accepts a single supplied value.
 
-```json
-{
-  "value": 1250,
-  "unit": {
-    "currency": {
-      "value": "USD",
-      "meta": {}
-    }
-  }
-}
-```
+**Remove final date with CDM Rune** uses an editable override installed from the
+curated bundle. The separate host workspace demonstrates injecting a clock
+provider. [Rune override walkthrough](README.rune-implementation.md) · [TypeScript host example](host/README.md)
 
-Currency uses CDM's metadata-bearing string representation. The checked fixture
-retains that representation, including the empty metadata object, in
-`fixtures/expected/increased-cash.json`. Execute does not overwrite the input
-example. Use **Save as example…** to retain a result.
-
-## What the example demonstrates
-
-- `model/cash.rosetta` is ordinary editable local Rune source.
-- `build-config.yml` selects the exact CDM release and names independent
-  TypeScript and JSON Schema targets. There is no default target.
-- `build-config.lock.json` records verified commits, checksums, dependency
-  releases, artifact cohort, and toolchain versions. Keep it in the repository.
-- `examples/cash.example.json` binds JSON data to the upstream CDM type identity.
-- `workflows/increase-cash.workflow.json` stores the example binding and two
-  literal controls. `layouts/` stores presentation without changing Rune values.
-- Build target namespace selection includes only the starter and local CDM
-  wrapper; the generator follows their required CDM type/function closure.
-
-The CDM `Schedule` type is a general value-or-dated-values container. This sample
-uses only one supplied numeric value. Its `SingleCashValue` precondition rejects
-a missing value or supplied dated values. It **does not generate a payment
-schedule**, derive dates, perform business-day adjustment, fetch observations,
-price an instrument, or promise decimal/Java implementation parity. No Java
-implementation or host provider is needed for this selected Rune function.
-
-## Pinned reference releases
+## Reference releases
 
 | Model | Release | Upstream commit |
 | --- | --- | --- |
-| FINOS Common Domain Model | 7.8.0 | `5b852ed61573467c8f8e6bb5cc02779a70df032d` |
-| Rune FpML | 3.8.0 | `ab92e75df45e882e6775a5ce94dc6f520fe446f6` |
-| Rune DSL | 10.15.1 | `4fa22a75f957940ee2c70a6ead5d53597dbd97a1` |
+| FINOS Common Domain Model | 7.9.0 | `0f1f99aef829c23910476981bb91256544cb8569` |
+| Rune FpML | 3.13.0 | `ffda7dffda7cec97f9648123a1ba3cb8aad4e568` |
+| Rune DSL | 10.15.3 | `c0251abb7ed07b1f2d2fe248f0b7f3aa9df7c5f6` |
 
-CDM's published release determines its dependency releases. This example does
-not consume Nightly or an upstream moving branch. Upgrading references is an
-explicit reviewed workspace change, rather than an incidental build side effect.
-
-For local/CI checking, use the shared template instructions in [README](README.md).
-Its checker verifies both saved workflows against their expected fixtures. The
-original example code is covered by the repository's MIT license. The reference
-models retain their upstream licenses; see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md)
-and [the retained CDM license](LICENSE-CDM.md).
+The lockfile pins the released models and their curated artifacts. The
+TypeScript and JSON Schema targets start at the example namespaces and include
+their dependencies. TypeScript uses one module per namespace to accommodate
+the swap's dependency closure. The local checker builds both targets and
+compares each saved workflow with its fixture in `fixtures/expected/`.
+[Local setup and checker](README.md#check-locally)

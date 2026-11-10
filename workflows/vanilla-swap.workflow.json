@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "vanilla-swap",
+  "name": "Check the vanilla swap",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "CheckVanillaSwap"
+  },
+  "inputs": {
+    "tradeState": {
+      "kind": "example",
+      "exampleId": "vanilla-swap"
+    }
+  },
+  "outputs": {
+    "isFixedFloatSwap": {
+      "name": "isFixedFloatSwap"
+    }
+  }
+}

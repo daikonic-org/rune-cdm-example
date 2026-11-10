@@ -2,9 +2,9 @@
 
 `model/current-date.rosetta` calls the original CDM
 `cdm.base.datetime.Today`, which is marked `[codeImplementation]`.
-Rune-langium's generator supplies handwritten implementations for TypeScript and
-Python from its shared `packages/codegen/src/implementations/` catalog. Each entry
-checks the qualified declaration, standard annotation, signature and target.
+The locked CDM bundle supplies handwritten TypeScript and Python implementations
+for this declaration. The toolchain consumes those selected target bindings
+when it emits each module.
 
 Today means the **UTC calendar date**. Standalone TypeScript returns
 `Temporal.PlainDate` using the generated runtime's Temporal polyfill; standalone
@@ -24,9 +24,5 @@ Python module. It checks the current UTC date in both outputs without registerin
 any callback. Deterministic UTC-midnight, leap-day, signature and override tests
 live with the implementations in rune-langium.
 
-Workspace declaration replacements remain available, as shown by the
-[pure Rune example](README.rune-implementation.md). The separate
-[host example](host/README.md) explicitly overrides the bundled TypeScript default
-with an injectable clock. Its provider returns the same Temporal date type.
-Unavailable target bodies produce explicit diagnostics; a body for one language
-does not imply support for another.
+The separate host workspace binds `Today` to an injectable clock and returns the
+same Temporal date type. [Host provider example](host/README.md)

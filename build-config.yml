@@ -4,7 +4,7 @@ sources:
 references:
   cdm:
     repository: https://github.com/finos/common-domain-model
-    release: 7.8.0
+    release: 7.9.0
 targets:
   typescript:
     generator: typescript
@@ -14,7 +14,7 @@ targets:
       - example.cdm
       - example.cdm.implementation
     options:
-      layout: single-file
+      layout: per-namespace
   schema:
     generator: json-schema
     output: generated/schema
@@ -23,14 +23,16 @@ targets:
       - example.cdm
       - example.cdm.implementation
 overrides:
-  - kind: declaration
+  - kind: resource
     source:
-      model: cdm
-      namespace: cdm.base.datetime
-      kind: RosettaFunction
-      name: PopOffDateList
-    replacement:
       model: local
-      namespace: example.cdm.implementation
-      kind: RosettaFunction
-      name: PopOffDateListRune
+      id: example.starter.CurrencyCode#RosettaTypeAlias
+    path: resources/currency.json
+    codeList:
+      format: json
+    provenance:
+      model: currency-list
+      repository: https://github.com/umpirsky/currency-list
+      release: 4ab0b8244b44aa41fc859809e90d6e9fe00ae59e
+      commit: 4ab0b8244b44aa41fc859809e90d6e9fe00ae59e
+      path: data/en/currency.json

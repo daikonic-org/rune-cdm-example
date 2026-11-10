@@ -1,0 +1,37 @@
+[
+  {
+    "accrualStart": "2018-11-06",
+    "accrualEnd": "2019-11-06",
+    "paymentDate": "2019-11-06",
+    "amount": 60800,
+    "currency": "SEK"
+  },
+  {
+    "accrualStart": "2019-11-06",
+    "accrualEnd": "2020-11-06",
+    "paymentDate": "2020-11-06",
+    "amount": 60800,
+    "currency": "SEK"
+  },
+  {
+    "accrualStart": "2020-11-06",
+    "accrualEnd": "2021-11-06",
+    "paymentDate": "2021-11-08",
+    "amount": 60800,
+    "currency": "SEK"
+  },
+  {
+    "accrualStart": "2021-11-06",
+    "accrualEnd": "2022-11-06",
+    "paymentDate": "2022-11-07",
+    "amount": 60800,
+    "currency": "SEK"
+  },
+  {
+    "accrualStart": "2022-11-06",
+    "accrualEnd": "2023-11-06",
+    "paymentDate": "2023-11-06",
+    "amount": 60800,
+    "currency": "SEK"
+  }
+]

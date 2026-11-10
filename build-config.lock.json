@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "configHash": "acb36fcbaee529982c22d7c1d4bcd3435434876fe177ef0c33a746c80b3a289c",
+  "configHash": "108159a17ec2bb2f0b64c082db62d62ad4ab4734509a90e8fe09a9ec1074e065",
   "toolchain": {
     "@rune-langium/core": "0.1.0",
     "@rune-langium/codegen": "0.1.0",
@@ -9,34 +9,34 @@
   "references": {
     "cdm": {
       "repository": "https://github.com/finos/common-domain-model",
-      "release": "7.8.0",
-      "commit": "5b852ed61573467c8f8e6bb5cc02779a70df032d",
-      "manifest": "https://www.daikonic.dev/curated/cdm/artifacts/cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d/manifest.json",
-      "cohort": "cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d",
-      "checksum": "5be089298329b373cd538bb979e97af8d7944e64ad3aaf0b205761ee4eced93f",
+      "release": "7.9.0",
+      "commit": "0f1f99aef829c23910476981bb91256544cb8569",
+      "manifest": "https://www.daikonic.dev/curated/cdm/artifacts/cohort-6e954cdc7ff5f997c48eeebc8dc763e94c599a0c4e40a39539f2a3082410da3b/manifest.json",
+      "cohort": "cohort-6e954cdc7ff5f997c48eeebc8dc763e94c599a0c4e40a39539f2a3082410da3b",
+      "checksum": "a719c7834b04ae08dda0c8b9845c6ebcca374836c27b733e52658564eaa01a42",
       "dependencies": {
-        "rune-dsl": "10.15.1",
-        "fpml": "3.8.0"
+        "rune-dsl": "10.15.3",
+        "fpml": "3.13.0"
       }
     },
     "fpml": {
       "repository": "https://github.com/rosetta-models/rune-fpml",
-      "release": "3.8.0",
-      "commit": "ab92e75df45e882e6775a5ce94dc6f520fe446f6",
-      "manifest": "https://www.daikonic.dev/curated/fpml/artifacts/cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d/manifest.json",
-      "cohort": "cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d",
-      "checksum": "291f58621665d0b9329a127ec1db78ce4c5f87e1005680e1139d70cf1d4429c8",
+      "release": "3.13.0",
+      "commit": "ffda7dffda7cec97f9648123a1ba3cb8aad4e568",
+      "manifest": "https://www.daikonic.dev/curated/fpml/artifacts/cohort-6e954cdc7ff5f997c48eeebc8dc763e94c599a0c4e40a39539f2a3082410da3b/manifest.json",
+      "cohort": "cohort-6e954cdc7ff5f997c48eeebc8dc763e94c599a0c4e40a39539f2a3082410da3b",
+      "checksum": "c6735e97f65a59815075b43790f48e01505c24158f8a2c75a7f1a461129571bf",
       "dependencies": {
-        "rune-dsl": "10.15.1"
+        "rune-dsl": "10.15.3"
       }
     },
     "rune-dsl": {
       "repository": "https://github.com/finos/rune-dsl",
-      "release": "10.15.1",
-      "commit": "4fa22a75f957940ee2c70a6ead5d53597dbd97a1",
-      "manifest": "https://www.daikonic.dev/curated/rune-dsl/artifacts/cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d/manifest.json",
-      "cohort": "cohort-eabcc0c3f64d99789c135d68f3d5cbd5b3f3d86c2fbc24e85c1b863b80ad285d",
-      "checksum": "10310fd48c2a385fead5ef02a46ec92ad4f5d5b477e5d0f03e4225c57bb9eaec",
+      "release": "10.15.3",
+      "commit": "c0251abb7ed07b1f2d2fe248f0b7f3aa9df7c5f6",
+      "manifest": "https://www.daikonic.dev/curated/rune-dsl/artifacts/cohort-6e954cdc7ff5f997c48eeebc8dc763e94c599a0c4e40a39539f2a3082410da3b/manifest.json",
+      "cohort": "cohort-6e954cdc7ff5f997c48eeebc8dc763e94c599a0c4e40a39539f2a3082410da3b",
+      "checksum": "d67df348dd1e0c03d7ba61546929c1ae186e4bbe5713433c72cf41ad534e304d",
       "dependencies": {}
     }
   }

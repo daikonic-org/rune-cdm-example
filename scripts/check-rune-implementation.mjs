@@ -10,14 +10,25 @@ import { checked, compileOutputs, openLocalProject, runtime, config, codegen } f
 const root = fileURLToPath(new URL('../', import.meta.url));
 const scratch = await mkdtemp(join(tmpdir(), 'rune-implementation-check-'));
 try {
-  const { snapshot } = await openLocalProject(root, { privateRoot: join(scratch, 'private') });
+  const { snapshot: initial, adapter } = await openLocalProject(root, { privateRoot: join(scratch, 'private') });
   const loaded = await runtime.loadLockedReferences(
-    snapshot.lock,
+    initial.lock,
     runtime.createReferenceTransport(),
     runtime.createMemoryReferenceCache(),
     new AbortController().signal
   );
   checked(loaded.diagnostics, 'Rune reference closure');
+  const installed = await runtime.installCuratedImplementationSources({
+    snapshot: initial,
+    references: loaded.documents,
+    adapter,
+    validateTarget: runtime.validateProjectTarget
+  });
+  checked(installed.diagnostics, 'Installed Rune overrides');
+  const { snapshot } = installed;
+  assert.ok(snapshot);
+  const override = 'model/implementations/cdm/date-list.rosetta';
+  assert.ok(snapshot.files.has(override));
   async function compile(snapshot, label) {
     const graph = await runtime.buildEffectiveProject(snapshot, loaded.documents);
     checked(graph.diagnostics, 'Rune implementation graph');
@@ -52,24 +63,15 @@ try {
   }
   assert.deepEqual(trim({}), { dates: [] });
   assert.deepEqual(trim({ dates: null }), { dates: [] });
-  const overrides = snapshot.project.build.overrides.filter(
-    (mapping) =>
-      !(
-        mapping.kind === 'declaration' &&
-        mapping.source.model === 'cdm' &&
-        mapping.source.namespace === 'cdm.base.datetime' &&
-        mapping.source.name === 'PopOffDateList'
-      )
-  );
   const removed = await config.createProjectDraftSnapshot(
     snapshot,
-    new Map([['build-config.yml', JSON.stringify({ ...snapshot.project.build, overrides })]]),
+    new Map([[override, null]]),
     runtime.validateProjectTarget
   );
   const unavailable = await compile(removed, 'without-override');
   assert.throws(() => unavailable({ dates: [a, b, b] }), /implemented|implementation|unavailable/i);
   console.log(
-    'PASS PopOffDateList: order, duplicates, empty/singleton/absent/null lists, unchanged input and removed-override checks.'
+    'PASS PopOffDateList: order, duplicates, empty/singleton/absent/null lists, unchanged input and draft removal of the installed override.'
   );
 } finally {
   await rm(scratch, { recursive: true, force: true });

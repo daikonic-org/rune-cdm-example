@@ -1,0 +1,28 @@
+{
+  "@type": "cdm.product.common.schedule.CalculationPeriodDates",
+  "@key:external": "calculationPeriodDates-64209462-663",
+  "effectiveDate": {
+    "adjustableDate": {
+      "unadjustedDate": "2018-11-06",
+      "dateAdjustments": {
+        "businessDayConvention": "MODFOLLOWING"
+      }
+    }
+  },
+  "terminationDate": {
+    "adjustableDate": {
+      "unadjustedDate": "2023-11-06",
+      "dateAdjustments": {
+        "businessDayConvention": "MODFOLLOWING"
+      }
+    }
+  },
+  "calculationPeriodDatesAdjustments": {
+    "businessDayConvention": "MODFOLLOWING"
+  },
+  "calculationPeriodFrequency": {
+    "periodMultiplier": 1,
+    "period": "Y",
+    "rollConvention": "6"
+  }
+}

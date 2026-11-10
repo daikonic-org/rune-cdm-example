@@ -29,7 +29,9 @@ try {
   const generated = await codegen.generateSelected(graph.documents, selection, {
     target: 'typescript',
     strict: true,
-    typescript: { layout: 'single-file' }
+    typescript: { layout: 'single-file' },
+    projectBindings: graph.implementationBindings,
+    projectResources: graph.bindings
   });
   checked(
     generated.outputs.flatMap((output) => output.diagnostics),
@@ -62,7 +64,7 @@ try {
   assert.ok([before, after].includes(value.toString()));
   assert.ok([before, after].includes(pythonValue));
   console.log(
-    'PASS Today: locked CDM declaration, strict standalone TypeScript, standalone Python, UTC current date; no installed provider.'
+    'PASS Today: locked CDM target implementation, strict standalone TypeScript and Python, UTC current date.'
   );
 } finally {
   await rm(scratch, { recursive: true, force: true });
