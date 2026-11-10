@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "fixed-leg-dates",
+  "name": "Vanilla swap fixed-leg dates",
+  "type": {
+    "model": "cdm",
+    "namespace": "cdm.product.common.schedule",
+    "kind": "Data",
+    "name": "CalculationPeriodDates"
+  },
+  "payload": "examples/fixed-leg-dates.json",
+  "codec": "RUNE_JSON",
+  "provenance": {
+    "source": "Derived from FINOS CDM vanilla swap",
+    "reference": {
+      "model": "cdm",
+      "repository": "https://github.com/finos/common-domain-model",
+      "release": "7.9.0",
+      "commit": "0f1f99aef829c23910476981bb91256544cb8569",
+      "path": "rosetta-source/src/main/resources/ingest/output/fpml-confirmation-to-trade-state/fpml-5-13-products-interest-rate-derivatives/ird-ex01a-vanilla-swap.json",
+      "format": "RUNE_JSON",
+      "version": "0.0.0.master-SNAPSHOT"
+    }
+  },
+  "expected": "fixtures/expected/fixed-leg-dates.json"
+}

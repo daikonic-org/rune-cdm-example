@@ -1,0 +1,82 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm
+version "1.0.0"
+
+import cdm.base.datetime.*
+import cdm.event.common.*
+import cdm.product.asset.*
+import cdm.product.asset.calculation.*
+import cdm.product.common.schedule.*
+import cdm.product.qualification.*
+
+func CheckVanillaSwap: <"Check whether CDM classifies the supplied trade as a fixed-float interest rate swap.">
+  inputs:
+    tradeState TradeState (1..1)
+  output:
+    isFixedFloatSwap boolean (1..1)
+  set isFixedFloatSwap:
+    Qualify_InterestRate_IRSwap_FixedFloat(tradeState -> trade -> product -> economicTerms)
+
+func GenerateFixedLegSchedule: <"Generate the fixed leg's accrual periods from the saved CDM calculation dates.">
+  inputs:
+    dates CalculationPeriodDates (1..1)
+  output:
+    periods CalculationPeriodData (0..*)
+  set periods: CalculationPeriods(dates)
+
+type FixedCoupon:
+  accrualStart date (1..1)
+  accrualEnd date (1..1)
+  paymentDate date (1..1)
+  amount number (1..1)
+  currency string (1..1)
+
+func CalculateFixedLegCoupons: <"Calculate one fixed coupon per accrual period for a fixed leg paid at period end without a lag.">
+  inputs:
+    leg InterestRatePayout (1..1)
+  output:
+    coupons FixedCoupon (0..*)
+
+  alias payment: leg -> paymentDates
+  alias frequency: leg -> calculationPeriodDates -> calculationPeriodFrequency
+
+  condition SimpleFixedLegPayments:
+    leg -> rateSpecification as FixedRateSpecification exists
+      and payment -> payRelativeTo = PayRelativeToEnum -> CalculationPeriodEndDate
+      and payment -> paymentFrequency -> period = frequency -> period
+      and payment -> paymentFrequency -> periodMultiplier = frequency -> periodMultiplier
+      and payment -> paymentDaysOffset is absent
+      and payment -> firstPaymentDate is absent
+      and payment -> lastRegularPaymentDate is absent
+      and payment -> paymentDateSchedule is absent
+      and payment -> paymentDatesAdjustments -> businessCenters is absent
+
+  set coupons:
+    GenerateFixedLegSchedule(leg -> calculationPeriodDates)
+      extract period [FixedCouponForPeriod(leg, period)]
+
+func FixedCouponForPeriod:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+  output:
+    coupon FixedCoupon (1..1)
+  alias fixed: FixedAmountCalculation(leg, Create_CalculationPeriodBase(period), empty)
+  alias paymentDate:
+    ResolveAdjustableDate(AdjustableOrRelativeDate {
+      adjustableDate: AdjustableDate {
+        unadjustedDate: period -> endDate,
+        dateAdjustments: leg -> paymentDates -> paymentDatesAdjustments,
+        ...
+      },
+      ...
+    })
+
+  set coupon: FixedCoupon {
+    accrualStart: period -> startDate,
+    accrualEnd: period -> endDate,
+    paymentDate: paymentDate,
+    amount: fixed -> calculatedAmount,
+    currency: fixed -> calculationPeriodNotionalAmount -> unit -> currency
+  }

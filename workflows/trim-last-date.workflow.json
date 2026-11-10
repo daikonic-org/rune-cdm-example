@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "trim-last-date",
-  "name": "Remove final date with local Rune",
+  "name": "Remove final date with CDM Rune",
   "function": {
     "model": "local",
     "namespace": "example.cdm.implementation",

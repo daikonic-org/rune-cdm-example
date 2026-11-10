@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -16,7 +16,9 @@ const runtime = await load('packages/project-runtime/dist/index.js');
 const { openLocalProject } = await load('packages/project-runtime/dist/node.js');
 const { projectTargetNamespaces } = await load('packages/project-runtime/dist/project-build.js');
 const core = await load('packages/core/dist/index.js');
+const { projectDataFormat } = await load('packages/core/dist/serialization/rune-json.js');
 const codegen = await load('packages/codegen/dist/src/export.js');
+const { RUNTIME_HELPER_SOURCE } = await load('packages/codegen/dist/src/helpers.js');
 const requireToolchain = createRequire(join(toolchain, 'packages/codegen/package.json'));
 const ts = requireToolchain('typescript-classic');
 
@@ -38,7 +40,8 @@ export async function compileOutputs(outputs, compiled) {
     strict: true,
     noEmit: true,
     skipLibCheck: true,
-    target: ts.ScriptTarget.ES2022,
+    target: ts.ScriptTarget.ESNext,
+    lib: ['lib.esnext.d.ts'],
     module: ts.ModuleKind.CommonJS,
     types: [],
     paths: { '@rune-langium/project-runtime': [join(toolchain, 'packages/project-runtime/dist/index.d.ts')] }
@@ -49,7 +52,9 @@ export async function compileOutputs(outputs, compiled) {
     await writeFile(path, output.content);
     await writeFile(
       path.replace(/\.ts$/, '.js'),
-      ts.transpileModule(output.content, { compilerOptions: { ...options, noEmit: false } }).outputText
+      ts.transpileModule(output.content, {
+        compilerOptions: { ...options, target: ts.ScriptTarget.ES2025, noEmit: false }
+      }).outputText
     );
   }
   const program = ts.createProgram(
@@ -57,7 +62,12 @@ export async function compileOutputs(outputs, compiled) {
     options
   );
   assert.deepEqual(
-    ts.getPreEmitDiagnostics(program).map((issue) => ts.flattenDiagnosticMessageText(issue.messageText, '\n')),
+    ts.getPreEmitDiagnostics(program).map((issue) => {
+      const message = ts.flattenDiagnosticMessageText(issue.messageText, '\n');
+      if (!issue.file || issue.start === undefined) return message;
+      const { line, character } = issue.file.getLineAndCharacterOfPosition(issue.start);
+      return `${relative(compiled, issue.file.fileName)}:${line + 1}:${character + 1} ${message}`;
+    }),
     [],
     'Strict generated TypeScript'
   );
@@ -68,21 +78,27 @@ export async function checkWorkspace() {
   const scratch = await mkdtemp(join(tmpdir(), 'rune-workspace-check-'));
 
   try {
-    const { snapshot, adapter } = await openLocalProject(root, { privateRoot: join(scratch, 'private') });
-    checked(snapshot.project.diagnostics, 'Project configuration');
+    const { snapshot: initial, adapter } = await openLocalProject(root, { privateRoot: join(scratch, 'private') });
+    checked(initial.project.diagnostics, 'Project configuration');
     const signal = new AbortController().signal;
     const transport = runtime.createReferenceTransport();
     const cache = runtime.createMemoryReferenceCache();
-    const references = snapshot.lock
-      ? await runtime.loadLockedReferences(snapshot.lock, transport, cache, signal)
+    const references = initial.lock
+      ? await runtime.loadLockedReferences(initial.lock, transport, cache, signal)
       : { documents: [], diagnostics: [] };
     checked(references.diagnostics, 'Locked reference artifacts');
     const built = await runtime.buildProject(
-      snapshot,
+      initial,
       { targets: 'all', referenceTransport: transport, referenceCache: cache },
       adapter
     );
     assert.equal(built.status, 'success', JSON.stringify(built.diagnostics, null, 2));
+    // Build installs verified Rune implementation sources as ordinary workspace files.
+    const snapshot = await config.readProjectSnapshot({
+      workspaceId: initial.workspaceId,
+      adapter,
+      validateTarget: runtime.validateProjectTarget
+    });
     const graph = await runtime.buildEffectiveProject(snapshot, references.documents);
     const known = new Set(
       graph.documents.flatMap((doc) =>
@@ -105,7 +121,7 @@ export async function checkWorkspace() {
       new Set(graph.documents.map((doc) => core.namespaceFromModelName(doc.parseResult.value.name)).filter(Boolean))
     );
     const generated = await codegen.generateSelected(
-      graph.documents,
+      graph.services.shared.workspace.LangiumDocuments.all.toArray(),
       { namespaces, declarations: [] },
       {
         target: 'typescript',
@@ -129,7 +145,8 @@ export async function checkWorkspace() {
       checked(emitted.diagnostics, 'Canonical function input schema');
       assert.ok(emitted.schemaName);
       const path = '__workflow_inputs_' + index + '.ts';
-      outputs.push({ relativePath: path, content: emitted.code });
+      const code = emitted.code.replace(/^import \{ Temporal \} from '@js-temporal\/polyfill';$/m, '');
+      outputs.push({ relativePath: path, content: `${RUNTIME_HELPER_SOURCE}\n${code}` });
       return { path, name: emitted.schemaName };
     });
     const compiled = join(scratch, 'compiled');
@@ -143,7 +160,11 @@ export async function checkWorkspace() {
           assert.equal(binding.kind, 'example', 'Sample checks support saved-example and literal inputs.');
           const example = examples.documents.find((entry) => entry.descriptor.id === binding.exampleId);
           assert.ok(example, 'Missing workflow example: ' + binding.exampleId);
-          inputs[name] = example.payload;
+          const type = example.descriptor.type;
+          inputs[name] =
+            projectDataFormat(example.descriptor.codec) === 'RUNE_JSON'
+              ? codegen.adaptPreviewData(graph.documents, type.namespace + '.' + type.name + '#' + type.kind, example.payload).data
+              : example.payload;
           if (example.descriptor.expected) expected.add(example.descriptor.expected);
         }
       }

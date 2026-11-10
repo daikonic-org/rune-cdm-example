@@ -1,8 +1,8 @@
 # Rune CDM example
 
 A Rune workspace generated from the [rune-starter template](https://github.com/daikonic-org/rune-starter),
-with a pinned CDM release and an **Increase cash** workflow using the upstream
-CDM `UpdateAmount` function. Start with the [CDM walkthrough](README.cdm.md).
+with a pinned CDM release and runnable examples for swap qualification, accrual
+schedules, fixed coupons, and cash amount changes. Start with the [CDM walkthrough](README.cdm.md).
 The inherited **Double quote** workflow remains available without a reference download.
 
 ## Start in Rune Studio
@@ -16,6 +16,10 @@ The saved input is `{ "amount": 10, "currency": "USD" }`; the result is
 `{ "amount": 20, "currency": "USD" }`. The Amount control formats USD for display;
 formatting does not change the stored number. Use **Save as example…** to retain
 another result. Execution alone does not create a saved example.
+
+The workspace materializes `Quote.currency` as a Rune enum from the pinned
+currency code list. The searchable select shows the labels while the payload
+stores the codes. [Currency resource provenance](THIRD_PARTY_NOTICES.md#currency-code-list-resource)
 
 Ordinary Save updates working-copy files. Commit and push are separate actions
 and require a repository you can write to. Template copies are independent
@@ -33,14 +37,15 @@ repositories; later template changes are not pulled automatically.
 | `workflows/` | Saved function selection and input bindings. |
 | `layouts/` | Shared form layout and control formatting. |
 | `fixtures/expected/` | Intentional checked output fixtures. |
+| `resources/` | Pinned currency code list and its upstream license. |
 | `.rune-toolchain.json` | Exact source revision and runtime versions used by CI. |
 
 Generated code, ordinary exports, installed dependencies, and private Studio
 state are ignored by Git. Credentials and personal panel state do not belong in
 the repository. This repository was generated from `daikonic-org/rune-starter`. Its checker and CI
-are extended here to cover CDM implementations. See the [CDM guide](README.cdm.md)
-for the reference configuration and amount workflow, the [Rune implementation](README.rune-implementation.md)
-for a local declaration replacement, the [bundled native example](README.native-implementation.md)
+are extended here to cover CDM implementations. The workspace guides cover
+[the saved trade workflows](README.cdm.md), [editable curated Rune overrides](README.rune-implementation.md),
+the [bundled native example](README.native-implementation.md)
 for standalone TypeScript/Python Today, and the [TypeScript host example](host/README.md)
 for explicit provider registration.
 
@@ -73,6 +78,6 @@ node packages/cli/dist/index.js build --project ../rune-cdm-example --target typ
 node packages/cli/dist/index.js build --project ../rune-cdm-example --target schema
 ```
 
-This example demonstrates local Rune execution, not financial scheduling or
-calendar behavior. Original workspace content is MIT licensed; Rune Studio is
-source-available under its own license.
+Original workspace content is MIT licensed. The swap inputs retain their CDM
+license and provenance. Rune Studio is source-available under its own license.
+See [third-party notices](THIRD_PARTY_NOTICES.md).

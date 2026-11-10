@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "fixed-leg",
+  "name": "Calculate fixed-leg coupons",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "CalculateFixedLegCoupons"
+  },
+  "inputs": {
+    "leg": {
+      "kind": "example",
+      "exampleId": "fixed-leg"
+    }
+  },
+  "outputs": {
+    "coupons": {
+      "name": "coupons",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm",
+        "kind": "Data",
+        "name": "FixedCoupon"
+      }
+    }
+  }
+}
