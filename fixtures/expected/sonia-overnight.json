@@ -1,0 +1,48 @@
+[
+  {
+    "accrualStart": "2025-01-06",
+    "accrualEnd": "2025-01-13",
+    "paymentDate": "2025-01-13",
+    "notional": 1000000,
+    "rate": 0.0460406,
+    "yearFraction": 0.019178082191780823,
+    "amount": 882.9704109589043,
+    "currency": "GBP",
+    "payerReceiver": {
+      "payer": "Party1",
+      "receiver": "Party2"
+    },
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "GBP-SONIA",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "GBP_SONIA",
+          "meta": {}
+        }
+      }
+    },
+    "snapshotId": "illustrative-sofr-sonia-2025-v1",
+    "illustrative": true,
+    "calculatedRate": 0.04604063895259437,
+    "observations": {
+      "observationDates": ["2025-01-06", "2025-01-07", "2025-01-08", "2025-01-09", "2025-01-10"],
+      "weights": [1, 1, 1, 1, 3],
+      "observedRates": [0.046, 0.04601, 0.04602, 0.04603, 0.04604]
+    },
+    "growthFactors": [1.0001260273972603, 1.0001260547945205, 1.0001260821917808, 1.000126109589041, 1.000378410958904],
+    "growthCurve": [
+      1, 1.0001260273972603, 1.0002520980781384, 1.0003782120549976, 1.0005043693402054, 1.000882971157995
+    ]
+  }
+]

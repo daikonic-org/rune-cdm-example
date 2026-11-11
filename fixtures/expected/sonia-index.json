@@ -1,0 +1,52 @@
+[
+  {
+    "coupon": {
+      "accrualStart": "2025-01-06",
+      "accrualEnd": "2025-01-13",
+      "paymentDate": "2025-01-13",
+      "notional": 1000000,
+      "rate": 0.0460406,
+      "yearFraction": 0.019178082191780823,
+      "amount": 882.9704109589043,
+      "currency": "GBP",
+      "payerReceiver": {
+        "payer": "Party1",
+        "receiver": "Party2"
+      }
+    },
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "GBP-SONIA",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "GBP_SONIA",
+          "meta": {}
+        }
+      }
+    },
+    "snapshotId": "illustrative-sofr-sonia-2025-v1",
+    "illustrative": true,
+    "startLevel": {
+      "date": "2025-01-06",
+      "value": 100
+    },
+    "endLevel": {
+      "date": "2025-01-13",
+      "value": 100.08829711579952
+    },
+    "calendarDays": 7,
+    "compoundedRate": 0.046040638952605954,
+    "dailyCompoundedRate": 0.04604063895259437,
+    "rateDifference": 1.1581013925621164e-14
+  }
+]

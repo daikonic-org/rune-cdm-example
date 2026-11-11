@@ -1,0 +1,193 @@
+{
+  "@type": "cdm.product.template.NonTransferableProduct",
+  "economicTerms": {
+    "payout": [
+      {
+        "@type": "cdm.product.asset.InterestRatePayout",
+        "payerReceiver": {
+          "payer": "Party2",
+          "receiver": "Party1"
+        },
+        "priceQuantity": {
+          "quantitySchedule": {
+            "value": 1000000,
+            "unit": {
+              "currency": {
+                "@data": "GBP"
+              }
+            }
+          }
+        },
+        "rateSpecification": {
+          "@type": "cdm.product.asset.FixedRateSpecification",
+          "rateSchedule": {
+            "price": {
+              "value": 0.043,
+              "unit": {
+                "currency": {
+                  "@data": "GBP"
+                }
+              },
+              "perUnitOf": {
+                "currency": {
+                  "@data": "GBP"
+                }
+              },
+              "priceType": "InterestRate"
+            }
+          }
+        },
+        "dayCountFraction": {
+          "@data": "ACT/365.FIXED"
+        },
+        "calculationPeriodDates": {
+          "effectiveDate": {
+            "adjustableDate": {
+              "unadjustedDate": "2025-01-06",
+              "dateAdjustments": {
+                "businessDayConvention": "NONE"
+              }
+            }
+          },
+          "terminationDate": {
+            "adjustableDate": {
+              "unadjustedDate": "2025-01-13",
+              "dateAdjustments": {
+                "businessDayConvention": "NONE"
+              }
+            }
+          },
+          "calculationPeriodDatesAdjustments": {
+            "businessDayConvention": "MODFOLLOWING",
+            "businessCenters": {
+              "businessCenter": ["GBLO"]
+            }
+          },
+          "calculationPeriodFrequency": {
+            "periodMultiplier": 7,
+            "period": "D",
+            "rollConvention": "NONE"
+          }
+        },
+        "paymentDates": {
+          "paymentFrequency": {
+            "periodMultiplier": 7,
+            "period": "D"
+          },
+          "payRelativeTo": "CalculationPeriodEndDate",
+          "paymentDatesAdjustments": {
+            "businessDayConvention": "MODFOLLOWING",
+            "businessCenters": {
+              "businessCenter": ["GBLO"]
+            }
+          }
+        }
+      },
+      {
+        "@type": "cdm.product.asset.InterestRatePayout",
+        "payerReceiver": {
+          "payer": "Party1",
+          "receiver": "Party2"
+        },
+        "priceQuantity": {
+          "quantitySchedule": {
+            "value": 1000000,
+            "unit": {
+              "currency": {
+                "@data": "GBP"
+              }
+            }
+          }
+        },
+        "rateSpecification": {
+          "@type": "cdm.product.asset.FloatingRateSpecification",
+          "rateOption": {
+            "@type": "cdm.observable.asset.FloatingRateIndex",
+            "assetClass": "InterestRate",
+            "floatingRateIndex": {
+              "@data": "GBP-SONIA"
+            },
+            "assetType": "Other",
+            "identifier": [
+              {
+                "identifier": {
+                  "@data": "GBP-SONIA"
+                },
+                "identifierType": "Other"
+              }
+            ]
+          },
+          "calculationParameters": {
+            "calculationMethod": "Compounding",
+            "applicableBusinessDays": {
+              "businessCenter": ["GBLO"]
+            }
+          }
+        },
+        "dayCountFraction": {
+          "@data": "ACT/365.FIXED"
+        },
+        "calculationPeriodDates": {
+          "effectiveDate": {
+            "adjustableDate": {
+              "unadjustedDate": "2025-01-06",
+              "dateAdjustments": {
+                "businessDayConvention": "NONE"
+              }
+            }
+          },
+          "terminationDate": {
+            "adjustableDate": {
+              "unadjustedDate": "2025-01-13",
+              "dateAdjustments": {
+                "businessDayConvention": "NONE"
+              }
+            }
+          },
+          "calculationPeriodDatesAdjustments": {
+            "businessDayConvention": "MODFOLLOWING",
+            "businessCenters": {
+              "businessCenter": ["GBLO"]
+            }
+          },
+          "calculationPeriodFrequency": {
+            "periodMultiplier": 7,
+            "period": "D",
+            "rollConvention": "NONE"
+          }
+        },
+        "paymentDates": {
+          "paymentFrequency": {
+            "periodMultiplier": 7,
+            "period": "D"
+          },
+          "payRelativeTo": "CalculationPeriodEndDate",
+          "paymentDatesAdjustments": {
+            "businessDayConvention": "MODFOLLOWING",
+            "businessCenters": {
+              "businessCenter": ["GBLO"]
+            }
+          }
+        },
+        "resetDates": {
+          "resetRelativeTo": "CalculationPeriodEndDate",
+          "fixingDates": {
+            "periodMultiplier": -2,
+            "period": "D",
+            "dayType": "Business",
+            "businessDayConvention": "NONE",
+            "businessCenters": {
+              "businessCenter": ["GBLO"]
+            }
+          },
+          "resetDatesAdjustments": {
+            "businessDayConvention": "MODFOLLOWING",
+            "businessCenters": {
+              "businessCenter": ["GBLO"]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

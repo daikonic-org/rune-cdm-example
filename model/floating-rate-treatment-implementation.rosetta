@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: LicenseRef-CDM
+// Derived from FINOS Common Domain Model 7.9.0, commit 0f1f99aef829c23910476981bb91256544cb8569.
+// Source: rosetta-source/src/main/rosetta/product-asset-floatingrate-func.rosetta
+// Retains the Community Specification License 1.0 in LICENSE-CDM.md and NOTICE-CDM.md.
+// Local change: skip the required US treatment call when no treatment exists, and reject the unimplemented conversions.
+override namespace cdm.product.asset.floatingrate
+version "1.0.0"
+
+import cdm.base.math.*
+import cdm.product.asset.*
+import cdm.product.common.schedule.*
+
+func ApplyFloatingRateProcessing: <"Perform rate treatments on floating rates, such as applying spreads, multipliers, caps and floors, rounding, and negative interest treatment. TODO: initialRate needs to be supported.  Also, to support compounding methods, it may be necessary to split the before spread and after spread values and return both, so that cashflows can be computed both ways. This may require this function to be redesigned or split into pieces (e.g. factor out the post-spread processing).  Rate treatments are described in Section 6 of the 2021 ISDA Definitions.  Negative treatment does not correctly support the case where compounded periods are applicable and will need to be enhanced for that case when compounding calculations are developed.">
+    inputs:
+        processing FloatingRateProcessingParameters (1..1) <"THe parameters to be used for processing, such as multipliers, spreads, cap rates, etc.">
+        rawRate number (1..1) <"The floating rate prior to treatment, either a single term rate, or a calculated rate such as an OIS or lookback compounded rate.">
+        calculationPeriod CalculationPeriodBase (1..1) <"The calculation period for with the processing need to be performed.">
+        isInitialPeriod boolean (1..1) <"Is this the initial calculation period of the payout?">
+    output:
+        details FloatingRateProcessingDetails (1..1) <"Results are details of the rate treatment.">
+
+    // evaluate any floating rate multiplier (these are not described in the ISDA Definition but are included in FpML to support Inverse Floaters.  The multiplier typically 1 or -1 and is applied prior to other treatments.
+    alias multiplier: processing -> multiplier
+    alias multiplied: rawRate * multiplier
+    alias multipliedRate:
+        if multiplier exists then multiplied else rawRate
+    // evaluate US Dollar treatments (described in Section 6.9 of the 2021 ISDA Definitions)
+    alias treatedRate: multipliedRate
+
+    // begin evaluating the floating negative treatment, in section 5.8 of the 2021 ISDA definitions
+    alias negativeTreatment: processing -> negativeTreatment
+    // the following linne addresses section 6.8.6.  If the rate is negative prior to the spread, set it to 0
+    alias negativeTreatedRate:
+        if (negativeTreatment = NegativeInterestRateTreatmentEnum -> ZeroInterestRateExcludingSpreadMethod)
+        then Max(0.0, treatedRate)
+        else treatedRate
+
+    // add spread (covered in section 6.5.4 and other places)
+    alias spreadRate: processing -> spread
+    alias added: negativeTreatedRate + spreadRate
+    alias ratePlusSpread:
+        if spreadRate exists then added else negativeTreatedRate
+    // the following line addresses section 6.8.4.  If the rate is negative after the spread, set it to 0
+    alias negativeTreatedRatePlusSpread:
+        if (negativeTreatment = NegativeInterestRateTreatmentEnum -> ZeroInterestRateMethod)
+        then Max(0.0, ratePlusSpread)
+        else ratePlusSpread
+
+    // initial rate - if the initial rate is specified and it is the initial (first) period, use the initial rate instead.  This sets up aliases to support that
+    alias doInitialRate:
+        if (isInitialPeriod = True and processing -> initialRate exists)
+        then True
+        else False
+    alias initialRate: processing -> initialRate -> value
+    alias initialRatePluSpread: initialRate + spreadRate
+    alias initialRatePlusSpread:
+        if (spreadRate exists)
+        then initialRatePluSpread
+        else initialRate
+
+    condition UnsupportedUSRateTreatment: <"The upstream treatment implementation is a passthrough stub; do not silently accept a specified conversion.">
+        processing -> treatment is absent
+
+    // return the key inputs
+    set details -> processingParameters: processing
+    set details -> rawRate: rawRate
+
+    // calculate and return the processes rate, both including and excluding the spread
+    set details -> processedRate:
+        if (doInitialRate = True)
+        then initialRatePluSpread
+        else ApplyFloatingRatePostSpreadProcessing(ratePlusSpread, processing)
+    set details -> spreadExclusiveRate:
+        if (doInitialRate = True)
+        then initialRate
+        else ApplyFloatingRatePostSpreadProcessing(negativeTreatedRate, processing)

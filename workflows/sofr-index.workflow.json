@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "sofr-index",
+  "name": "Cross-check SOFR daily and index compounding",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "CalculateIndexCoupons"
+  },
+  "inputs": {
+    "product": {
+      "kind": "example",
+      "exampleId": "sofr-week-product"
+    },
+    "context": {
+      "kind": "example",
+      "exampleId": "illustrative-market"
+    }
+  },
+  "outputs": {
+    "coupons": {
+      "name": "coupons",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm",
+        "kind": "Data",
+        "name": "IndexCouponRow"
+      }
+    }
+  }
+}

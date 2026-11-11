@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+override namespace cdm.product.asset.floatingrate
+version "1.0.0"
+
+import cdm.product.asset.*
+import cdm.product.common.schedule.*
+
+func GetFloatingRateProcessingParameters: <"Only invoke a required schedule lookup when its optional contractual schedule exists. All lookups and rate treatments remain the CDM implementations.">
+  inputs:
+    interestRatePayout InterestRatePayout (1..1)
+    calculationPeriod CalculationPeriodBase (1..1)
+  output:
+    processingParameters FloatingRateProcessingParameters (1..1)
+  alias specification: interestRatePayout -> rateSpecification as FloatingRateSpecification
+  set processingParameters: FloatingRateProcessingParameters {
+    initialRate: specification -> initialRate,
+    spread: if specification -> spreadSchedule exists then SpreadAmount(interestRatePayout, calculationPeriod),
+    multiplier: if specification -> floatingRateMultiplierSchedule exists then MultiplierAmount(interestRatePayout, calculationPeriod),
+    capRate: if specification -> capRateSchedule exists then CapRateAmount(interestRatePayout, calculationPeriod),
+    floorRate: if specification -> floorRateSchedule exists then FloorRateAmount(interestRatePayout, calculationPeriod),
+    rounding: specification -> finalRateRounding,
+    negativeTreatment: specification -> negativeInterestRateTreatment,
+    treatment: specification -> rateTreatment
+  }

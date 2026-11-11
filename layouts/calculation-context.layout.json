@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "CalculationContext"
+  },
+  "columns": 3,
+  "fields": {
+    "snapshotId": {
+      "order": 0,
+      "span": 2
+    },
+    "illustrative": {
+      "order": 1,
+      "span": 1
+    },
+    "valuationDate": {
+      "order": 2,
+      "span": 1
+    },
+    "rates": {
+      "order": 3,
+      "span": 3
+    },
+    "principalRepayments": {
+      "order": 4,
+      "span": 3
+    },
+    "comparisonConventions": {
+      "order": 5,
+      "span": 3
+    }
+  }
+}

@@ -25,6 +25,27 @@ inlines the trade's `quantity-2` and `price-1` scoped references using the
 matching definitions in the original trade. The standalone inputs retain the
 original economics and the same CDM license.
 
+`examples/sofr-amortising-product.json`, `examples/sofr-week-product.json` and
+`examples/sonia-week-product.json` are transformed synthetic scenarios based on
+the standalone fixed payout's CDM structure. They replace dates, frequencies,
+currencies, notionals, rates and payer/receiver directions, inline index
+identities, add floating calculation/reset parameters and remove scoped keys.
+They do not preserve the source trade's economics or represent real trades.
+Their descriptors retain the source release and path. Preserve the CDM license
+for the derived model material.
+
+`examples/illustrative-market.json` and the product calculation expected results
+are original synthetic example material. SOFR/SONIA labels identify the intended
+reference indices; all stored rates and index levels are invented and are not
+redistributed official observations. See the [calculation conventions and limits](README.calculations.md).
+
+`model/floating-rate-treatment-implementation.rosetta` adapts
+`ApplyFloatingRateProcessing` from the pinned CDM 7.9.0
+`rosetta-source/src/main/rosetta/product-asset-floatingrate-func.rosetta`.
+It retains that release's calculation body and license, with a local guard for
+absent/unimplemented US rate treatments. Its header records the source commit
+and modification; the CDM license and notice above apply.
+
 The upstream [license](LICENSE-CDM.md) and [notice](NOTICE-CDM.md) are retained
 without modification. The MIT license applies to the original workspace
 source and synthetic example material. Preserve applicable upstream licenses,
