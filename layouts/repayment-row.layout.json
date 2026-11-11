@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "RepaymentRow"
+  },
+  "columns": 3,
+  "fields": {
+    "principal": {
+      "order": 0,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "closingNotional": {
+      "order": 1,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "totalPayment": {
+      "order": 2,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "coupon": {
+      "order": 3,
+      "span": 3
+    }
+  }
+}

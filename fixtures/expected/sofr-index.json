@@ -1,0 +1,52 @@
+[
+  {
+    "coupon": {
+      "accrualStart": "2025-01-06",
+      "accrualEnd": "2025-01-13",
+      "paymentDate": "2025-01-13",
+      "notional": 1000000,
+      "rate": 0.0430389,
+      "yearFraction": 0.019444444444444445,
+      "amount": 836.8675,
+      "currency": "USD",
+      "payerReceiver": {
+        "payer": "Party1",
+        "receiver": "Party2"
+      }
+    },
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "USD-SOFR",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "USD_SOFR",
+          "meta": {}
+        }
+      }
+    },
+    "snapshotId": "illustrative-sofr-sonia-2025-v1",
+    "illustrative": true,
+    "startLevel": {
+      "date": "2025-01-06",
+      "value": 100
+    },
+    "endLevel": {
+      "date": "2025-01-13",
+      "value": 100.08368682329846
+    },
+    "calendarDays": 7,
+    "compoundedRate": 0.043038937696354855,
+    "dailyCompoundedRate": 0.04303893769633201,
+    "rateDifference": 2.2842838731662596e-14
+  }
+]

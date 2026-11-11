@@ -1,0 +1,59 @@
+[
+  {
+    "coupon": {
+      "accrualStart": "2025-01-07",
+      "accrualEnd": "2025-02-07",
+      "paymentDate": "2025-02-07",
+      "notional": 1000000,
+      "rate": 0.045,
+      "yearFraction": 0.08611111111111111,
+      "amount": 3875,
+      "currency": "USD",
+      "payerReceiver": {
+        "payer": "Party2",
+        "receiver": "Party1"
+      }
+    },
+    "principal": 200000,
+    "closingNotional": 800000,
+    "totalPayment": 203875
+  },
+  {
+    "coupon": {
+      "accrualStart": "2025-02-07",
+      "accrualEnd": "2025-03-07",
+      "paymentDate": "2025-03-07",
+      "notional": 800000,
+      "rate": 0.045,
+      "yearFraction": 0.07777777777777778,
+      "amount": 2800,
+      "currency": "USD",
+      "payerReceiver": {
+        "payer": "Party2",
+        "receiver": "Party1"
+      }
+    },
+    "principal": 200000,
+    "closingNotional": 600000,
+    "totalPayment": 202800
+  },
+  {
+    "coupon": {
+      "accrualStart": "2025-03-07",
+      "accrualEnd": "2025-04-07",
+      "paymentDate": "2025-04-07",
+      "notional": 600000,
+      "rate": 0.045,
+      "yearFraction": 0.08611111111111111,
+      "amount": 2325,
+      "currency": "USD",
+      "payerReceiver": {
+        "payer": "Party2",
+        "receiver": "Party1"
+      }
+    },
+    "principal": 600000,
+    "closingNotional": 0,
+    "totalPayment": 602325
+  }
+]

@@ -13,7 +13,7 @@ const toolchain = resolve(process.env.RUNE_TOOLCHAIN);
 const load = (path) => import(pathToFileURL(join(toolchain, path)).href);
 const config = await load('packages/project-config/dist/index.js');
 const runtime = await load('packages/project-runtime/dist/index.js');
-const { openLocalProject } = await load('packages/project-runtime/dist/node.js');
+const { createNodeProjectFileAdapter } = await load('packages/project-runtime/dist/node.js');
 const { projectTargetNamespaces } = await load('packages/project-runtime/dist/project-build.js');
 const core = await load('packages/core/dist/index.js');
 const { projectDataFormat } = await load('packages/core/dist/serialization/rune-json.js');
@@ -30,7 +30,22 @@ function checked(diagnostics, context) {
   );
 }
 
-export { toolchain, config, runtime, openLocalProject, projectTargetNamespaces, core, codegen, checked };
+export { toolchain, config, runtime, projectTargetNamespaces, core, codegen, checked };
+
+export async function openLocalProject(root, options) {
+  const local = await createNodeProjectFileAdapter(root, options);
+  // Index/session files change independently of the example project.
+  const adapter = {
+    ...local,
+    list: async () => (await local.list()).filter((path) => !path.startsWith('.infigraph/'))
+  };
+  const snapshot = await config.readProjectSnapshot({
+    workspaceId: root,
+    adapter,
+    validateTarget: runtime.validateProjectTarget
+  });
+  return { snapshot, adapter };
+}
 
 export async function compileOutputs(outputs, compiled) {
   await mkdir(compiled);
@@ -74,7 +89,7 @@ export async function compileOutputs(outputs, compiled) {
   return createRequire(join(compiled, 'entry.js'));
 }
 
-export async function checkWorkspace() {
+export async function checkWorkspace({ verify } = {}) {
   const scratch = await mkdtemp(join(tmpdir(), 'rune-workspace-check-'));
 
   try {
@@ -100,6 +115,7 @@ export async function checkWorkspace() {
       validateTarget: runtime.validateProjectTarget
     });
     const graph = await runtime.buildEffectiveProject(snapshot, references.documents);
+    checked(graph.diagnostics, 'Effective project');
     const known = new Set(
       graph.documents.flatMap((doc) =>
         doc.parseResult.value.elements.flatMap((node) => {
@@ -136,21 +152,23 @@ export async function checkWorkspace() {
       'Generated TypeScript'
     );
     const outputs = [...generated.outputs];
-    const schemas = workflows.documents.map(({ value }, index) => {
-      const emitted = codegen.emitStandaloneZodSchema(
-        graph.documents,
-        value.function.namespace + '.' + value.function.name,
-        { functionInputs: true }
-      );
+    const inputSchemas = new Map();
+    const schemas = workflows.documents.map(({ value }) => {
+      const identity = value.function.namespace + '.' + value.function.name;
+      if (inputSchemas.has(identity)) return inputSchemas.get(identity);
+      const emitted = codegen.emitStandaloneZodSchema(graph.documents, identity, { functionInputs: true });
       checked(emitted.diagnostics, 'Canonical function input schema');
       assert.ok(emitted.schemaName);
-      const path = '__workflow_inputs_' + index + '.ts';
+      const path = '__workflow_inputs_' + inputSchemas.size + '.ts';
       const code = emitted.code.replace(/^import \{ Temporal \} from '@js-temporal\/polyfill';$/m, '');
       outputs.push({ relativePath: path, content: `${RUNTIME_HELPER_SOURCE}\n${code}` });
-      return { path, name: emitted.schemaName };
+      const schema = { path, name: emitted.schemaName };
+      inputSchemas.set(identity, schema);
+      return schema;
     });
     const compiled = join(scratch, 'compiled');
     const requireCompiled = await compileOutputs(outputs, compiled);
+    const executions = new Map();
     for (const [index, { value: workflow }] of workflows.documents.entries()) {
       const inputs = {},
         expected = new Set();
@@ -161,25 +179,44 @@ export async function checkWorkspace() {
           const example = examples.documents.find((entry) => entry.descriptor.id === binding.exampleId);
           assert.ok(example, 'Missing workflow example: ' + binding.exampleId);
           const type = example.descriptor.type;
-          inputs[name] =
-            projectDataFormat(example.descriptor.codec) === 'RUNE_JSON'
-              ? codegen.adaptPreviewData(graph.documents, type.namespace + '.' + type.name + '#' + type.kind, example.payload).data
-              : example.payload;
+          if (projectDataFormat(example.descriptor.codec) === 'RUNE_JSON') {
+            const adapted = codegen.adaptPreviewData(
+              graph.documents,
+              type.namespace + '.' + type.name + '#' + type.kind,
+              example.payload
+            );
+            inputs[name] = adapted.data;
+          } else inputs[name] = example.payload;
           if (example.descriptor.expected) expected.add(example.descriptor.expected);
         }
       }
-      assert.equal(expected.size, 1, 'Each sample workflow needs one expected-output fixture on its bound example.');
+      const workflowExpected = `fixtures/expected/${workflow.id}.json`;
+      if (snapshot.files.has(workflowExpected)) {
+        expected.clear();
+        expected.add(workflowExpected);
+      }
+      assert.equal(expected.size, 1, 'Each workflow needs a fixture matching its id, or one on its bound example.');
       const functions = generated.outputs
         .flatMap((entry) => entry.funcs)
         .filter((fn) => fn.name === workflow.function.name);
       assert.equal(functions.length, 1, 'Sample function names must be unambiguous in the selected output.');
       const fn = functions[0],
         schema = schemas[index];
-      const validated = requireCompiled(join(compiled, schema.path.replace(/\.ts$/, '.js')))[schema.name].parse(inputs);
+      const inputSchema = requireCompiled(join(compiled, schema.path.replace(/\.ts$/, '.js')))[schema.name];
       const callable = requireCompiled(join(compiled, fn.relativePath.replace(/\.ts$/, '.js')))[
         fn.exportName ?? fn.name
       ];
-      const result = callable(...fn.parameterNames.map((name) => validated[name]));
+      const execute = (values) => {
+        const parsed = inputSchema.parse(values);
+        return JSON.parse(JSON.stringify(callable(...fn.parameterNames.map((name) => parsed[name]))));
+      };
+      const result = execute(inputs);
+      executions.set(workflow.id, {
+        inputs,
+        execute,
+        parameterNames: fn.parameterNames,
+        functionName: workflow.function.namespace + '.' + workflow.function.name
+      });
       assert.deepEqual(
         JSON.parse(JSON.stringify(result)),
         JSON.parse(snapshot.files.get([...expected][0])),
@@ -187,6 +224,7 @@ export async function checkWorkspace() {
       );
       console.log('PASS ' + workflow.name);
     }
+    if (verify) await verify({ executions, graph, scratch, generated, snapshot });
     console.log(`Verified ${built.outputs.length} generated files and ${workflows.documents.length} workflows.`);
   } finally {
     await rm(scratch, { recursive: true, force: true });

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "sofr-week-product",
+  "name": "Illustrative one-week USD SOFR product",
+  "type": {
+    "model": "cdm",
+    "namespace": "cdm.product.template",
+    "kind": "Choice",
+    "name": "Product"
+  },
+  "payload": "examples/sofr-week-product.json",
+  "codec": "RUNE_JSON",
+  "provenance": {
+    "source": "Synthetic calculation scenario derived from FINOS CDM vanilla swap; terms and rates are illustrative",
+    "reference": {
+      "model": "cdm",
+      "repository": "https://github.com/finos/common-domain-model",
+      "release": "7.9.0",
+      "commit": "0f1f99aef829c23910476981bb91256544cb8569",
+      "path": "rosetta-source/src/main/resources/ingest/output/fpml-confirmation-to-trade-state/fpml-5-13-products-interest-rate-derivatives/ird-ex01a-vanilla-swap.json",
+      "format": "RUNE_JSON",
+      "version": "0.0.0.master-SNAPSHOT"
+    }
+  }
+}

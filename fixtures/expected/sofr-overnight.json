@@ -1,0 +1,48 @@
+[
+  {
+    "accrualStart": "2025-01-06",
+    "accrualEnd": "2025-01-13",
+    "paymentDate": "2025-01-13",
+    "notional": 1000000,
+    "rate": 0.0430389,
+    "yearFraction": 0.019444444444444445,
+    "amount": 836.8675,
+    "currency": "USD",
+    "payerReceiver": {
+      "payer": "Party1",
+      "receiver": "Party2"
+    },
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "USD-SOFR",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "USD_SOFR",
+          "meta": {}
+        }
+      }
+    },
+    "snapshotId": "illustrative-sofr-sonia-2025-v1",
+    "illustrative": true,
+    "calculatedRate": 0.04303893769633201,
+    "observations": {
+      "observationDates": ["2025-01-06", "2025-01-07", "2025-01-08", "2025-01-09", "2025-01-10"],
+      "weights": [1, 1, 1, 1, 3],
+      "observedRates": [0.043, 0.04301, 0.04302, 0.04303, 0.04304]
+    },
+    "growthFactors": [1.0001194444444443, 1.0001194722222222, 1.0001195, 1.0001195277777777, 1.0003586666666666],
+    "growthCurve": [
+      1, 1.0001194444444443, 1.0002389309369597, 1.0003584594892068, 1.0004780301128506, 1.0008368682329842
+    ]
+  }
+]

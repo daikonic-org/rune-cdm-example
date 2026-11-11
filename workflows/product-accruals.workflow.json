@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "product-accruals",
+  "name": "Accrue product interest as of 20 February",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "CalculateProductAccruals"
+  },
+  "inputs": {
+    "product": {
+      "kind": "example",
+      "exampleId": "sofr-amortising-product"
+    },
+    "context": {
+      "kind": "example",
+      "exampleId": "illustrative-market"
+    }
+  },
+  "outputs": {
+    "accruals": {
+      "name": "accruals",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm",
+        "kind": "Data",
+        "name": "AccrualRow"
+      }
+    }
+  }
+}

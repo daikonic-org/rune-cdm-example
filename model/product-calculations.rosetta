@@ -1,0 +1,461 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm
+version "1.0.0"
+
+import cdm.base.datetime.*
+import cdm.base.datetime.daycount.*
+import cdm.base.math.*
+import cdm.base.staticdata.party.*
+import cdm.observable.asset.*
+import cdm.observable.asset.calculatedrate.*
+import cdm.product.asset.*
+import cdm.product.asset.calculation.*
+import cdm.product.asset.floatingrate.*
+import cdm.product.common.schedule.*
+import cdm.product.template.*
+import impl.cdm.market.*
+
+type RateSeries: <"A supplied, versioned series for one exact CDM index identity. Rates are annual decimal rates; index levels are dimensionless.">
+  index InterestRateIndex (1..1)
+  observations DatedValue (1..*)
+  indexLevels DatedValue (0..*)
+
+type CalculationContext: <"Explicit calculation data; these examples never fetch live rates or use a default rate.">
+  snapshotId string (1..1)
+  illustrative boolean (1..1)
+  valuationDate date (1..1)
+  rates RateSeries (1..*)
+  principalRepayments DatedValue (0..*)
+  comparisonConventions DayCountFractionEnum (0..*)
+
+type ResetRow:
+  accrualStart date (1..1)
+  accrualEnd date (1..1)
+  resetDate date (1..1)
+  fixingDate date (1..1)
+  paymentDate date (1..1)
+  index InterestRateIndex (1..1)
+
+type CouponRow:
+  accrualStart date (1..1)
+  accrualEnd date (1..1)
+  paymentDate date (1..1)
+  notional number (1..1)
+  rate number (1..1)
+  yearFraction number (1..1)
+  amount number (1..1)
+  currency string (1..1)
+  payerReceiver PayerReceiver (1..1)
+
+type OvernightCouponRow extends CouponRow:
+  index InterestRateIndex (1..1)
+  snapshotId string (1..1)
+  illustrative boolean (1..1)
+  calculatedRate number (1..1)
+  observations CalculatedRateObservations (1..1)
+  growthFactors number (1..*)
+  growthCurve number (1..*)
+
+type RepaymentRow:
+  coupon CouponRow (1..1)
+  principal number (1..1)
+  closingNotional number (1..1)
+  totalPayment number (1..1)
+
+type DayCountComparison:
+  convention DayCountFractionEnum (1..1)
+  yearFraction number (1..1)
+  amount number (1..1)
+
+type AccrualRow:
+  accrualStart date (1..1)
+  accrualEnd date (1..1)
+  earnedThrough date (1..1)
+  notional number (1..1)
+  rate number (1..1)
+  currency string (1..1)
+  contractualConvention DayCountFractionEnum (1..1)
+  yearFraction number (1..1)
+  accruedAmount number (1..1)
+  comparisons DayCountComparison (0..*)
+
+type IndexCouponRow:
+  coupon CouponRow (1..1)
+  index InterestRateIndex (1..1)
+  snapshotId string (1..1)
+  illustrative boolean (1..1)
+  startLevel DatedValue (1..1)
+  endLevel DatedValue (1..1)
+  calendarDays int (1..1)
+  compoundedRate number (1..1)
+  dailyCompoundedRate number (1..1)
+  rateDifference number (1..1)
+
+type CashflowSummary: <"Undiscounted coupon comparison for one currency and opposing payer/receiver directions; not a legal netting determination.">
+  snapshotId string (1..1)
+  illustrative boolean (1..1)
+  fixedCoupons CouponRow (1..*)
+  floatingCoupons OvernightCouponRow (1..*)
+  currency string (1..1)
+  fixedTotal number (1..1)
+  floatingTotal number (1..1)
+  fixedMinusFloating number (1..1)
+
+func ProductInterestRateLegs: <"Read applicable economics from either branch of the CDM Product choice, including a TransferableProduct asset.">
+  inputs:
+    product Product (1..1)
+  output:
+    legs InterestRatePayout (1..*)
+  alias payouts: [product -> NonTransferableProduct -> economicTerms -> payout,
+    product -> TransferableProduct -> economicTerms -> payout]
+  condition OnlyInterestRatePayouts:
+    payouts count > 0 and payouts -> InterestRatePayout count = payouts count
+  set legs: payouts -> InterestRatePayout
+
+func FixedProductLeg:
+  inputs:
+    product Product (1..1)
+  output:
+    leg InterestRatePayout (1..1)
+  alias matching: ProductInterestRateLegs(product) filter rateSpecification as FixedRateSpecification exists
+  condition OneFixedLeg: matching count = 1
+  set leg: matching only-element
+
+func FloatingProductLeg:
+  inputs:
+    product Product (1..1)
+  output:
+    leg InterestRatePayout (1..1)
+  alias matching: ProductInterestRateLegs(product) filter rateSpecification as FloatingRateSpecification exists
+  condition OneFloatingLeg: matching count = 1
+  set leg: matching only-element
+
+func ExamplePeriods: <"The examples support regular schedules, one coupon per calculation period, period-end payments, and no payment lag or stub.">
+  inputs:
+    leg InterestRatePayout (1..1)
+  output:
+    periods CalculationPeriodData (1..*)
+  alias dates: leg -> calculationPeriodDates
+  alias payment: leg -> paymentDates
+  alias frequency: dates -> calculationPeriodFrequency
+  alias generated: CalculationPeriods(dates)
+  alias steps: leg -> priceQuantity -> quantitySchedule -> datedValue
+  condition RegularPeriodEndPayments:
+    dates exists and payment exists
+      and dates -> firstRegularPeriodStartDate is absent
+      and dates -> lastRegularPeriodEndDate is absent
+      and leg -> stubPeriod is absent
+      and leg -> compoundingMethod is absent
+      and payment -> payRelativeTo = PayRelativeToEnum -> CalculationPeriodEndDate
+      and payment -> paymentFrequency -> period = frequency -> period
+      and payment -> paymentFrequency -> periodMultiplier = frequency -> periodMultiplier
+      and payment -> paymentDaysOffset is absent
+      and payment -> firstPaymentDate is absent
+      and payment -> lastRegularPaymentDate is absent
+      and payment -> paymentDateSchedule is absent
+      and leg -> paymentDelay is absent
+      and leg -> discountingMethod is absent
+  condition NotionalStepsAtBoundaries:
+    steps is absent or (steps extract step [
+      generated filter [startDate = step -> date or endDate = step -> date] then count > 0
+    ] then all = True)
+  condition OrderedNotionalSteps:
+    ExampleDatesIncreasing(steps -> date)
+  set periods: generated
+
+func ExampleDatesIncreasing:
+  inputs:
+    dates date (0..*)
+  output:
+    increasing boolean (1..1)
+  set increasing:
+    if dates count <= 1 then True
+    else (PopOffDateList(dates) last) < (dates last) and ExampleDatesIncreasing(PopOffDateList(dates))
+
+func ExamplePaymentDate:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+  output:
+    paymentDate date (1..1)
+  set paymentDate:
+    ResolveAdjustableDate(AdjustableOrRelativeDate {
+      adjustableDate: AdjustableDate {
+        unadjustedDate: period -> endDate,
+        dateAdjustments: leg -> paymentDates -> paymentDatesAdjustments,
+        ...
+      }, ...
+    })
+
+func GenerateProductResets:
+  inputs:
+    product Product (1..1)
+  output:
+    resets ResetRow (1..*)
+  alias leg: FloatingProductLeg(product)
+  condition StandardResetDates:
+    leg -> resetDates -> resetRelativeTo exists
+      and leg -> resetDates -> fixingDates -> period = PeriodEnum -> D
+      and leg -> resetDates -> initialFixingDate is absent
+      and leg -> resetDates -> finalFixingDate is absent
+      and leg -> resetDates -> rateCutOffDaysOffset is absent
+  set resets: ExamplePeriods(leg) extract p [ProductResetForPeriod(leg, p)]
+
+func ProductResetForPeriod:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+  output:
+    reset ResetRow (1..1)
+  alias resetDate: DetermineResetDate(leg -> resetDates, Create_CalculationPeriodBase(period))
+  set reset: ResetRow {
+    accrualStart: period -> startDate,
+    accrualEnd: period -> endDate,
+    resetDate: resetDate,
+    fixingDate: DetermineFixingDate(leg -> resetDates, resetDate),
+    paymentDate: ExamplePaymentDate(leg, period),
+    index: (leg -> rateSpecification as FloatingRateSpecification) -> rateOption
+  }
+
+func ProductFixedCoupon:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+  output:
+    coupon CouponRow (1..1)
+  alias details: FixedAmountCalculation(leg, Create_CalculationPeriodBase(period), empty)
+  set coupon: CouponRow {
+    accrualStart: period -> startDate,
+    accrualEnd: period -> endDate,
+    paymentDate: ExamplePaymentDate(leg, period),
+    notional: details -> calculationPeriodNotionalAmount -> value,
+    rate: details -> fixedRate,
+    yearFraction: details -> yearFraction,
+    amount: details -> calculatedAmount,
+    currency: details -> calculationPeriodNotionalAmount -> unit -> currency,
+    payerReceiver: leg -> payerReceiver
+  }
+
+func CalculateProductRepayments: <"Use explicit principal payments and verify each against the product's notional step; a notional change alone is not a payment instruction.">
+  inputs:
+    product Product (1..1)
+    context CalculationContext (1..1)
+  output:
+    repayments RepaymentRow (1..*)
+  alias leg: FixedProductLeg(product)
+  alias periods: ExamplePeriods(leg)
+  condition RepaymentDatesInSchedule:
+    context -> principalRepayments is absent or (context -> principalRepayments extract payment [
+      periods filter [ExamplePaymentDate(leg, item) = payment -> date] then count = 1
+    ] then all = True)
+  set repayments: periods extract p [ProductRepaymentForPeriod(leg, p, context)]
+
+func ProductRepaymentForPeriod:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+    context CalculationContext (1..1)
+  output:
+    repayment RepaymentRow (1..1)
+  alias coupon: ProductFixedCoupon(leg, period)
+  alias payments: context -> principalRepayments filter date = coupon -> paymentDate
+  alias principal: if payments exists then (payments only-element) -> value else 0
+  alias closing: GetQuantityScheduleStepValues(leg -> priceQuantity -> quantitySchedule, period -> endDate) last
+  condition OnePrincipalPaymentPerDate: payments count <= 1
+  condition ConsistentPrincipalPlan: principal >= 0 and coupon -> notional - principal = closing
+  set repayment: RepaymentRow {
+    coupon: coupon,
+    principal: principal,
+    closingNotional: closing,
+    totalPayment: coupon -> amount + principal
+  }
+
+func CalculateProductAccruals: <"Interest earned from the product's start through the supplied as-of date, including completed periods. This is not an unpaid-interest balance.">
+  inputs:
+    product Product (1..1)
+    context CalculationContext (1..1)
+  output:
+    accruals AccrualRow (0..*)
+  alias leg: FixedProductLeg(product)
+  set accruals:
+    ExamplePeriods(leg) filter startDate < context -> valuationDate
+      then extract p [ProductAccrualForPeriod(leg, p, context)]
+
+func ProductAccrualForPeriod:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+    context CalculationContext (1..1)
+  output:
+    accrual AccrualRow (1..1)
+  alias end: if context -> valuationDate < period -> endDate then context -> valuationDate else period -> endDate
+  alias partial: CalculationPeriodBase { adjustedStartDate: period -> startDate, adjustedEndDate: end }
+  alias details: FixedAmountCalculation(leg, partial, empty)
+  set accrual: AccrualRow {
+    accrualStart: period -> startDate,
+    accrualEnd: period -> endDate,
+    earnedThrough: end,
+    notional: details -> calculationPeriodNotionalAmount -> value,
+    rate: details -> fixedRate,
+    currency: details -> calculationPeriodNotionalAmount -> unit -> currency,
+    contractualConvention: leg -> dayCountFraction,
+    yearFraction: details -> yearFraction,
+    accruedAmount: details -> calculatedAmount,
+    comparisons: context -> comparisonConventions extract dcf [CompareDayCount(leg, partial, dcf)]
+  }
+
+func CompareDayCount:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodBase (1..1)
+    convention DayCountFractionEnum (1..1)
+  output:
+    comparison DayCountComparison (1..1)
+  alias fraction: CalculateYearFraction(leg, convention, period)
+  alias notional: GetNotionalAmount(leg, period) -> value
+  set comparison: DayCountComparison {
+    convention: convention,
+    yearFraction: fraction,
+    amount: notional * GetFixedRate(leg, period) * fraction
+  }
+
+func ProductRateSeries:
+  inputs:
+    leg InterestRatePayout (1..1)
+    context CalculationContext (1..1)
+  output:
+    series RateSeries (1..1)
+  alias requestedIndex: (leg -> rateSpecification as FloatingRateSpecification) -> rateOption
+  alias matches: context -> rates filter requestedIndex = item -> index
+  condition RateSeriesMissing: matches count > 0
+  condition RateSeriesAmbiguous: matches count = 1
+  set series: matches only-element
+
+func ProductOvernightCoupon:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+    context CalculationContext (1..1)
+  output:
+    coupon OvernightCouponRow (1..1)
+  alias base: Create_CalculationPeriodBase(period)
+  alias specification: leg -> rateSpecification as FloatingRateSpecification
+  alias series: ProductRateSeries(leg, context)
+  alias params: specification -> calculationParameters
+  alias dates: GenerateObservationDatesAndWeights(params, leg -> resetDates, base, empty)
+  alias rates: dates -> observationDates extract d [MarketObservationOnDate(series -> observations, d) -> value]
+  alias calculated: ApplyCompoundingFormula(ProcessObservations(params, rates), dates -> weights, YearFractionForOneDay(leg -> dayCountFraction))
+  alias details: ApplyFloatingRateSetting(leg, base,
+    period -> startDate = (ExamplePeriods(leg) first -> startDate), empty, empty,
+    FloatingRateSettingDetails { floatingRate: calculated -> calculatedRate, calculationDetails: calculated, ... })
+  condition OvernightCompoundingParameters:
+    params exists
+      and params -> calculationMethod = CalculationMethodEnum -> Compounding
+      and specification -> fallbackRate is absent
+      and specification -> initialRate is absent
+  set coupon: OvernightCouponRow {
+    accrualStart: period -> startDate,
+    accrualEnd: period -> endDate,
+    paymentDate: ExamplePaymentDate(leg, period),
+    notional: details -> calculationPeriodNotionalAmount -> value,
+    rate: details -> appliedRate,
+    yearFraction: details -> yearFraction,
+    amount: details -> calculatedAmount,
+    currency: details -> calculationPeriodNotionalAmount -> unit -> currency,
+    payerReceiver: leg -> payerReceiver,
+    index: series -> index,
+    snapshotId: context -> snapshotId,
+    illustrative: context -> illustrative,
+    calculatedRate: calculated -> calculatedRate,
+    observations: CalculatedRateObservations { observationDates: dates -> observationDates, weights: dates -> weights, observedRates: rates },
+    growthFactors: calculated -> growthFactor,
+    growthCurve: calculated -> compoundedGrowth
+  }
+
+func CalculateOvernightCoupons:
+  inputs:
+    product Product (1..1)
+    context CalculationContext (1..1)
+  output:
+    coupons OvernightCouponRow (1..*)
+  alias leg: FloatingProductLeg(product)
+  set coupons: ExamplePeriods(leg) extract p [ProductOvernightCoupon(leg, p, context)]
+
+func CalculateIndexCoupons: <"Cross-check supplied illustrative index levels against daily compounding over the same start-inclusive, end-exclusive coupon period.">
+  inputs:
+    product Product (1..1)
+    context CalculationContext (1..1)
+  output:
+    coupons IndexCouponRow (1..*)
+  alias leg: FloatingProductLeg(product)
+  set coupons: ExamplePeriods(leg) extract p [ProductIndexCoupon(leg, p, context)]
+
+func ProductIndexCoupon:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+    context CalculationContext (1..1)
+  output:
+    result IndexCouponRow (1..1)
+  alias series: ProductRateSeries(leg, context)
+  alias start: ProductIndexLevel(series, period -> startDate)
+  alias end: ProductIndexLevel(series, period -> endDate)
+  alias days: DateDifference(period -> startDate, period -> endDate)
+  alias rate: ApplyCompoundedIndexFormula(start -> value, end -> value, leg -> dayCountFraction, days)
+  alias daily: ProductOvernightCoupon(leg, period, context)
+  alias base: Create_CalculationPeriodBase(period)
+  alias details: ApplyFloatingRateSetting(leg, base,
+    period -> startDate = (ExamplePeriods(leg) first -> startDate), empty, empty,
+    FloatingRateSettingDetails { floatingRate: rate, ... })
+  condition MatchingUnshiftedObservationWindow:
+    (leg -> rateSpecification as FloatingRateSpecification) -> calculationParameters -> observationShiftCalculation is absent
+      and (leg -> rateSpecification as FloatingRateSpecification) -> calculationParameters -> lookbackCalculation is absent
+      and (leg -> rateSpecification as FloatingRateSpecification) -> calculationParameters -> lockoutCalculation is absent
+      and (leg -> rateSpecification as FloatingRateSpecification) -> calculationParameters -> observationParameters is absent
+  set result: IndexCouponRow {
+    coupon: CouponRow {
+      accrualStart: period -> startDate, accrualEnd: period -> endDate,
+      paymentDate: daily -> paymentDate, notional: daily -> notional,
+      rate: details -> appliedRate, yearFraction: details -> yearFraction,
+      amount: details -> calculatedAmount, currency: daily -> currency,
+      payerReceiver: leg -> payerReceiver
+    },
+    index: series -> index, snapshotId: context -> snapshotId, illustrative: context -> illustrative,
+    startLevel: start, endLevel: end, calendarDays: days, compoundedRate: rate,
+    dailyCompoundedRate: daily -> calculatedRate, rateDifference: rate - daily -> calculatedRate
+  }
+
+func ProductIndexLevel:
+  inputs:
+    series RateSeries (1..1)
+    requestedDate date (1..1)
+  output:
+    level DatedValue (1..1)
+  alias reading: MarketObservationOnDate(series -> indexLevels, requestedDate)
+  condition PositiveIndexLevels: reading -> value > 0
+  set level: reading
+
+func CalculateProductCashflows:
+  inputs:
+    product Product (1..1)
+    context CalculationContext (1..1)
+  output:
+    summary CashflowSummary (1..1)
+  alias fixed: FixedProductLeg(product)
+  alias floating: FloatingProductLeg(product)
+  alias fixedCoupons: ExamplePeriods(fixed) extract p [ProductFixedCoupon(fixed, p)]
+  alias floatingCoupons: CalculateOvernightCoupons(product, context)
+  condition CompatibleCouponComparison:
+    fixedCoupons -> currency distinct count = 1
+      and floatingCoupons -> currency distinct = fixedCoupons -> currency distinct
+      and fixed -> payerReceiver -> payer = floating -> payerReceiver -> receiver
+      and fixed -> payerReceiver -> receiver = floating -> payerReceiver -> payer
+  set summary: CashflowSummary {
+    snapshotId: context -> snapshotId, illustrative: context -> illustrative,
+    fixedCoupons: fixedCoupons, floatingCoupons: floatingCoupons,
+    currency: fixedCoupons first -> currency,
+    fixedTotal: fixedCoupons -> amount sum,
+    floatingTotal: floatingCoupons -> amount sum,
+    fixedMinusFloating: fixedCoupons -> amount sum - floatingCoupons -> amount sum
+  }

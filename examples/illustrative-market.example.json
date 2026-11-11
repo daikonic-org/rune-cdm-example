@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "illustrative-market",
+  "name": "Illustrative SOFR / SONIA rates and calculation context (not market data)",
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "CalculationContext"
+  },
+  "payload": "examples/illustrative-market.json",
+  "codec": "RUNE_JSON"
+}

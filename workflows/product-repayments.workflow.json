@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "product-repayments",
+  "name": "Calculate amortising principal and interest",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "CalculateProductRepayments"
+  },
+  "inputs": {
+    "product": {
+      "kind": "example",
+      "exampleId": "sofr-amortising-product"
+    },
+    "context": {
+      "kind": "example",
+      "exampleId": "illustrative-market"
+    }
+  },
+  "outputs": {
+    "repayments": {
+      "name": "repayments",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm",
+        "kind": "Data",
+        "name": "RepaymentRow"
+      }
+    }
+  }
+}

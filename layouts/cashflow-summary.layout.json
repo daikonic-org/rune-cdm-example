@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "CashflowSummary"
+  },
+  "columns": 3,
+  "fields": {
+    "snapshotId": {
+      "order": 0,
+      "span": 2
+    },
+    "illustrative": {
+      "order": 1,
+      "span": 1
+    },
+    "currency": {
+      "order": 2,
+      "span": 3
+    },
+    "fixedTotal": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "floatingTotal": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "fixedMinusFloating": {
+      "order": 5,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "fixedCoupons": {
+      "order": 6,
+      "span": 3
+    },
+    "floatingCoupons": {
+      "order": 7,
+      "span": 3
+    }
+  }
+}

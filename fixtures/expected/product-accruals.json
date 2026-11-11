@@ -1,0 +1,58 @@
+[
+  {
+    "accrualStart": "2025-01-07",
+    "accrualEnd": "2025-02-07",
+    "earnedThrough": "2025-02-07",
+    "notional": 1000000,
+    "rate": 0.045,
+    "currency": "USD",
+    "contractualConvention": "ACT_360",
+    "yearFraction": 0.08611111111111111,
+    "accruedAmount": 3875,
+    "comparisons": [
+      {
+        "convention": "ACT_360",
+        "yearFraction": 0.08611111111111111,
+        "amount": 3875
+      },
+      {
+        "convention": "ACT_365_FIXED",
+        "yearFraction": 0.08493150684931507,
+        "amount": 3821.917808219178
+      },
+      {
+        "convention": "_30E_360",
+        "yearFraction": 0.08333333333333333,
+        "amount": 3750
+      }
+    ]
+  },
+  {
+    "accrualStart": "2025-02-07",
+    "accrualEnd": "2025-03-07",
+    "earnedThrough": "2025-02-20",
+    "notional": 800000,
+    "rate": 0.045,
+    "currency": "USD",
+    "contractualConvention": "ACT_360",
+    "yearFraction": 0.03611111111111111,
+    "accruedAmount": 1299.9999999999998,
+    "comparisons": [
+      {
+        "convention": "ACT_360",
+        "yearFraction": 0.03611111111111111,
+        "amount": 1299.9999999999998
+      },
+      {
+        "convention": "ACT_365_FIXED",
+        "yearFraction": 0.03561643835616438,
+        "amount": 1282.1917808219177
+      },
+      {
+        "convention": "_30E_360",
+        "yearFraction": 0.03611111111111111,
+        "amount": 1299.9999999999998
+      }
+    ]
+  }
+]

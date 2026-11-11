@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "OvernightCouponRow"
+  },
+  "columns": 3,
+  "fields": {
+    "accrualStart": {
+      "order": 0,
+      "span": 1
+    },
+    "accrualEnd": {
+      "order": 1,
+      "span": 1
+    },
+    "paymentDate": {
+      "order": 2,
+      "span": 1
+    },
+    "notional": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "calculatedRate": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10
+      }
+    },
+    "rate": {
+      "order": 5,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10
+      }
+    },
+    "yearFraction": {
+      "order": 6,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10
+      }
+    },
+    "amount": {
+      "order": 7,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "currency": {
+      "order": 8,
+      "span": 1
+    },
+    "snapshotId": {
+      "order": 9,
+      "span": 2
+    },
+    "illustrative": {
+      "order": 10,
+      "span": 1
+    },
+    "index": {
+      "order": 11,
+      "span": 3
+    },
+    "payerReceiver": {
+      "order": 12,
+      "span": 3
+    },
+    "observations": {
+      "order": 13,
+      "span": 3
+    },
+    "growthFactors": {
+      "order": 14,
+      "span": 3
+    },
+    "growthCurve": {
+      "order": 15,
+      "span": 3
+    }
+  }
+}

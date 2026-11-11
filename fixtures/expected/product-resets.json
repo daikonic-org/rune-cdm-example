@@ -1,0 +1,83 @@
+[
+  {
+    "accrualStart": "2025-01-07",
+    "accrualEnd": "2025-02-07",
+    "resetDate": "2025-02-07",
+    "fixingDate": "2025-02-05",
+    "paymentDate": "2025-02-07",
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "USD-SOFR",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "USD_SOFR",
+          "meta": {}
+        }
+      }
+    }
+  },
+  {
+    "accrualStart": "2025-02-07",
+    "accrualEnd": "2025-03-07",
+    "resetDate": "2025-03-07",
+    "fixingDate": "2025-03-05",
+    "paymentDate": "2025-03-07",
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "USD-SOFR",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "USD_SOFR",
+          "meta": {}
+        }
+      }
+    }
+  },
+  {
+    "accrualStart": "2025-03-07",
+    "accrualEnd": "2025-04-07",
+    "resetDate": "2025-04-07",
+    "fixingDate": "2025-04-03",
+    "paymentDate": "2025-04-07",
+    "index": {
+      "floatingRateIndex": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "identifier": [
+          {
+            "identifier": {
+              "value": "USD-SOFR",
+              "meta": {}
+            },
+            "identifierType": "Other"
+          }
+        ],
+        "assetType": "Other",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "value": "USD_SOFR",
+          "meta": {}
+        }
+      }
+    }
+  }
+]

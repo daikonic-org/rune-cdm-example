@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "AccrualRow"
+  },
+  "columns": 3,
+  "fields": {
+    "accrualStart": {
+      "order": 0,
+      "span": 1
+    },
+    "accrualEnd": {
+      "order": 1,
+      "span": 1
+    },
+    "earnedThrough": {
+      "order": 2,
+      "span": 1
+    },
+    "notional": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "rate": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10
+      }
+    },
+    "currency": {
+      "order": 5,
+      "span": 1
+    },
+    "contractualConvention": {
+      "order": 6,
+      "span": 1
+    },
+    "yearFraction": {
+      "order": 7,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10
+      }
+    },
+    "accruedAmount": {
+      "order": 8,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "comparisons": {
+      "order": 9,
+      "span": 3
+    }
+  }
+}

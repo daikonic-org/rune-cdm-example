@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "product-resets",
+  "name": "Generate product reset and fixing dates",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "RosettaFunction",
+    "name": "GenerateProductResets"
+  },
+  "inputs": {
+    "product": {
+      "kind": "example",
+      "exampleId": "sofr-amortising-product"
+    }
+  },
+  "outputs": {
+    "resets": {
+      "name": "resets",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm",
+        "kind": "Data",
+        "name": "ResetRow"
+      }
+    }
+  }
+}

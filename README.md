@@ -1,8 +1,10 @@
 # Rune CDM example
 
 A Rune workspace generated from the [rune-starter template](https://github.com/daikonic-org/rune-starter),
-with a pinned CDM release and runnable examples for swap qualification, accrual
-schedules, fixed coupons, and cash amount changes. Start with the [CDM walkthrough](README.cdm.md).
+with a pinned CDM release and runnable examples for swap qualification, product
+reset and repayment schedules, accruals, fixed/floating coupons, compounding and
+cash amount changes. Start with the [CDM walkthrough](README.cdm.md) or
+the [product calculation workflows](README.calculations.md).
 The inherited **Double quote** workflow remains available without a reference download.
 
 ## Start in Rune Studio
@@ -61,15 +63,18 @@ cd ../rune-langium
 pnpm install --frozen-lockfile
 pnpm --filter '@rune-langium/cli...' run build
 cd ../rune-cdm-example
-RUNE_TOOLCHAIN=../rune-langium node scripts/check.mjs
+RUNE_TOOLCHAIN=../rune-langium PYTHON_BINARY=python3.13 node scripts/check-product-calculations.mjs
 ```
 
 The main checker uses the shared project runtime to build every named target, reads
 portable records through the canonical schemas, strictly compiles the generated
 TypeScript, validates workflow inputs with the generated schema, and compares
-execution results with the expected fixture. It supports the saved-example and
-literal bindings used by these sample workflows. GitHub Actions runs the same
-checker and the separate host-provider checks against the pinned toolchain.
+execution results with the expected fixture. An expected fixture named after the
+workflow id takes precedence over the legacy expected fixture on a bound example,
+so several workflows can share the same product and context. The product checker
+adds independent amount checks, negative cases and generated Python parity.
+It supports the saved-example and literal bindings used here. GitHub Actions runs
+the same checker and the separate host-provider checks against the pinned toolchain.
 
 To build an individual target from the toolchain checkout:
 

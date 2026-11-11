@@ -4,6 +4,11 @@ Open the **CDM example** workspace in Rune Studio, let the pinned reference
 models load, then choose a **Saved workflow** in **Prototype** and select **Execute**.
 Each workflow loads its saved inputs and displays the result.
 
+The [product calculation walkthrough](README.calculations.md) adds reset/fixing
+dates, explicit repayments, as-of accruals, overnight/index compounding and
+fixed/floating coupon summaries. Its saved SOFR and SONIA series are clearly
+labelled synthetic example data and can be edited in the typed context.
+
 ## One swap, three workflows
 
 | Saved workflow | Input | CDM functions | Result |

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm",
+    "kind": "Data",
+    "name": "ResetRow"
+  },
+  "columns": 3,
+  "fields": {
+    "accrualStart": {
+      "order": 0,
+      "span": 1
+    },
+    "accrualEnd": {
+      "order": 1,
+      "span": 1
+    },
+    "paymentDate": {
+      "order": 2,
+      "span": 1
+    },
+    "resetDate": {
+      "order": 3,
+      "span": 1
+    },
+    "fixingDate": {
+      "order": 4,
+      "span": 1
+    },
+    "index": {
+      "order": 5,
+      "span": 3
+    }
+  }
+}
