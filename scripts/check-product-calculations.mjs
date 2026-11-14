@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { checkWorkspace, codegen, checked } from './check.mjs';
+import { verifyMarketCalculations } from './market-calculation-cases.mjs';
 
 function close(actual, expected, label = 'number') {
   assert.ok(Number.isFinite(actual), `${label}: ${actual} must be finite`);
@@ -21,7 +22,10 @@ function equivalent(actual, expected, path = '') {
     assert.equal(actual.length, expected.length, path);
     expected.forEach((value, index) => equivalent(actual[index], value, `${path}[${index}]`));
   } else if (expected && typeof expected === 'object') {
-    assert.deepEqual(Object.keys(actual).sort(), Object.keys(expected).sort(), path);
+    // Python represents absent optional Rune fields as None; JS omits undefined properties.
+    // Ignore only null fields absent from the expected object, never populated extras or array entries.
+    const keys = Object.keys(actual).filter((key) => actual[key] !== null || Object.hasOwn(expected, key));
+    assert.deepEqual(keys.sort(), Object.keys(expected).sort(), path);
     for (const key of Object.keys(expected)) equivalent(actual[key], expected[key], `${path}.${key}`);
   } else assert.equal(actual, expected, path);
 }
@@ -189,7 +193,10 @@ async function verifyCalculations({ executions, graph, scratch }) {
   run(
     'sofr-overnight',
     (input) => {
-      input.context.rates[0].index.floatingRateIndex.indexTenor = { period: 'D', periodMultiplier: 1 };
+      input.context.rates[0].index.floatingRateIndex.indexTenor = {
+        period: 'D',
+        periodMultiplier: 1
+      };
     },
     /RateSeriesMissing/
   );
@@ -264,9 +271,17 @@ async function verifyCalculations({ executions, graph, scratch }) {
     /UnsupportedUSRateTreatment/
   );
 
+  await verifyMarketCalculations({ executions, run, close });
+
   const selection = {
     namespaces: [],
-    declarations: [...new Set(cases.map((entry) => executions.get(entry.id).functionName))].map((qualified) => ({
+    declarations: [
+      ...new Set([
+        ...cases.map((entry) => executions.get(entry.id).functionName),
+        'cdm.base.datetime.BusinessCenterHolidays',
+        'cdm.base.datetime.IsHoliday'
+      ])
+    ].map((qualified) => ({
       namespace: qualified.slice(0, qualified.lastIndexOf('.')),
       name: qualified.slice(qualified.lastIndexOf('.') + 1),
       kind: 'RosettaFunction'
@@ -276,6 +291,9 @@ async function verifyCalculations({ executions, graph, scratch }) {
     codegen.resolveExportSelection(graph.services.shared.workspace.LangiumDocuments.all.toArray(), selection).documents
   );
   checked(python.diagnostics, 'Python product calculation projection');
+  const holidayList = python.bindings.get('cdm.base.datetime.BusinessCenterHolidays');
+  const holidayLookup = python.bindings.get('cdm.base.datetime.IsHoliday');
+  assert.ok(holidayList && holidayLookup);
   const invocations = cases.map((entry) => {
     const execution = executions.get(entry.id);
     const binding = python.bindings.get(execution.functionName);
@@ -291,6 +309,16 @@ async function verifyCalculations({ executions, graph, scratch }) {
 import ast, json, sys
 if sys.version_info < (3, 13):
     raise RuntimeError('Use Python >=3.13 (PYTHON_BINARY).')
+# Compare the optimized integer lookup with the original date-list contract.
+calendar_dates = ['2026-11-06', '2026-11-07', '2026-11-11', '2026-12-25', '2027-01-01', '2027-05-03']
+for center in ['GBLO', 'USGS']:
+    original = set(${holidayList}(center))
+    for day in calendar_dates:
+        assert ${holidayLookup}(day, [center]) == (day in original), (center, day)
+assert ${holidayLookup}('2026-11-11', ['USGS']) is True
+assert ${holidayLookup}('2026-11-11', ['GBLO']) is False
+assert ${holidayLookup}('2026-11-11', ['GBLO', 'USGS']) is True
+assert ${holidayLookup}('2026-11-11', []) is False
 results = []
 with open(sys.argv[1]) as source:
     for case in json.load(source):

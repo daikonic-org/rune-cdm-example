@@ -1,0 +1,152 @@
+{
+  "facility": {
+    "id": "facility-sonia-demo",
+    "partyReference": {
+      "href": "agent"
+    },
+    "instrumentId": [
+      {
+        "value": "facility-sonia-demo",
+        "instrumentIdScheme": "urn:daikonic:example:facility"
+      }
+    ],
+    "description": "Illustrative revolving GBP SONIA facility",
+    "borrowerPartyReference": {
+      "href": "borrower"
+    },
+    "startDate": "2026-11-02T00:00:00Z",
+    "maturityDate": "2026-11-09T00:00:00Z",
+    "currentCommitment": {
+      "totalCommitmentAmount": {
+        "currency": {
+          "value": "GBP"
+        },
+        "amount": 2000000
+      }
+    }
+  },
+  "contracts": [
+    {
+      "id": "drawdown-a",
+      "partyReference": {
+        "href": "agent"
+      },
+      "contractId": [
+        {
+          "value": "drawdown-a",
+          "contractIdScheme": "urn:daikonic:example:loan-contract"
+        }
+      ],
+      "facilityReference": {
+        "href": "facility-sonia-demo"
+      },
+      "effectiveDate": "2026-11-02T00:00:00Z",
+      "maturityDate": "2026-11-09T00:00:00Z",
+      "borrowerPartyReference": {
+        "href": "borrower"
+      },
+      "amount": {
+        "currency": {
+          "value": "GBP"
+        },
+        "amount": 1000000
+      },
+      "floatingRateAccrual": {
+        "accrualOptionId": {
+          "value": "SONIA-compounded-plus-simple-margin",
+          "accrualTypeIdScheme": "urn:daikonic:example:loan-accrual"
+        },
+        "dayCountFraction": {
+          "value": "ACT/365.FIXED"
+        },
+        "rate": {
+          "floatingRateIndex": {
+            "value": "GBP-SONIA"
+          },
+          "isCompoundingBalance": false,
+          "spreadSchedule": [
+            {
+              "initialValue": 0.015
+            }
+          ],
+          "calculationParameters": {
+            "calculationMethod": "Compounding",
+            "applicableBusinessDays": {
+              "businessCenters": {
+                "businessCenter": [
+                  {
+                    "value": "GBLO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "startDate": "2026-11-02T00:00:00Z",
+        "endDate": "2026-11-09T00:00:00Z",
+        "numberOfDays": 7
+      }
+    },
+    {
+      "id": "drawdown-b",
+      "partyReference": {
+        "href": "agent"
+      },
+      "contractId": [
+        {
+          "value": "drawdown-b",
+          "contractIdScheme": "urn:daikonic:example:loan-contract"
+        }
+      ],
+      "facilityReference": {
+        "href": "facility-sonia-demo"
+      },
+      "effectiveDate": "2026-11-04T00:00:00Z",
+      "maturityDate": "2026-11-09T00:00:00Z",
+      "borrowerPartyReference": {
+        "href": "borrower"
+      },
+      "amount": {
+        "currency": {
+          "value": "GBP"
+        },
+        "amount": 500000
+      },
+      "floatingRateAccrual": {
+        "accrualOptionId": {
+          "value": "SONIA-compounded-plus-simple-margin",
+          "accrualTypeIdScheme": "urn:daikonic:example:loan-accrual"
+        },
+        "dayCountFraction": {
+          "value": "ACT/365.FIXED"
+        },
+        "rate": {
+          "floatingRateIndex": {
+            "value": "GBP-SONIA"
+          },
+          "isCompoundingBalance": false,
+          "spreadSchedule": [
+            {
+              "initialValue": 0.0175
+            }
+          ],
+          "calculationParameters": {
+            "calculationMethod": "Compounding",
+            "applicableBusinessDays": {
+              "businessCenters": {
+                "businessCenter": [
+                  {
+                    "value": "GBLO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "startDate": "2026-11-04T00:00:00Z",
+        "endDate": "2026-11-09T00:00:00Z",
+        "numberOfDays": 5
+      }
+    }
+  ]
+}

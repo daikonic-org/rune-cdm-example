@@ -1,0 +1,103 @@
+// SPDX-License-Identifier: MIT
+// Generated benchmark provider; snapshot responses retain their source terms.
+// Source: European Central Bank. Rates converted from percent to decimal; index levels unchanged.
+// Terms: https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html
+// estr: https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2X2A25.WT?startPeriod=2026-11-02&endPeriod=2026-11-09&format=csvdata
+// Retrieved 2026-11-14T04:27:53.107Z; SHA-256 64be45b08eced3f6c0c25f00c409509b88c84182267af84db162b5454edeb03f
+// Source: European Central Bank. Rates converted from percent to decimal; index levels unchanged.
+// Terms: https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html
+// estr-index: https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF08.CI?startPeriod=2026-11-02&endPeriod=2026-11-09&format=csvdata
+// Retrieved 2026-11-14T04:27:58.888Z; SHA-256 7f2ade10408d9d85b575f143f3a94ee131014d2e4445893ebc5c13d12f129c5f
+// Source: Federal Reserve Bank of New York. Rates converted from percent to decimal; index levels unchanged.
+// Terms: https://www.newyorkfed.org/aboutthefed/terms_of_use.html
+// sofr: https://markets.newyorkfed.org/api/rates/secured/sofr/search.json?startDate=2026-11-02&endDate=2026-11-09
+// Retrieved 2026-11-14T04:27:46.727Z; SHA-256 d8efd93df6c40a8e5753833115ad46033c61a755298daec00bdbfe0e8c2d5ec6
+// Source: Federal Reserve Bank of New York. Rates converted from percent to decimal; index levels unchanged.
+// Terms: https://www.newyorkfed.org/aboutthefed/terms_of_use.html
+// sofr-index: https://markets.newyorkfed.org/api/rates/secured/sofrai/search.json?startDate=2026-11-02&endDate=2026-11-09
+// Retrieved 2026-11-14T04:27:46.734Z; SHA-256 a016af81116866728aa378ecfeb4f9e11f863104498d71e8224a2e1cfcbfc925
+// SONIA and/or SONIA Compounded Index data licensed under the Open Government Licence v3.0 and copyright the Governor and Company of the Bank of England. The trade marks “Bank of England” and “SONIA” are registered trade marks of the Bank of England.
+// Terms: https://www.bankofengland.co.uk/legal
+// sonia: https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=02%2FNov%2F2026&Dateto=09%2FNov%2F2026&SeriesCodes=IUDSOIA&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N
+// Retrieved 2026-11-14T04:27:47.088Z; SHA-256 c1c392221dd7d831987be7b82d91f823c0fe4a01962c547d34fbbf69fac8787a
+// SONIA and/or SONIA Compounded Index data licensed under the Open Government Licence v3.0 and copyright the Governor and Company of the Bank of England. The trade marks “Bank of England” and “SONIA” are registered trade marks of the Bank of England.
+// Terms: https://www.bankofengland.co.uk/legal
+// sonia-index: https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=02%2FNov%2F2026&Dateto=09%2FNov%2F2026&SeriesCodes=IUDZOS2&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N
+// Retrieved 2026-11-14T04:27:47.243Z; SHA-256 31b5976f2765701a2e82bdd6c3fed1d4e32866d9a05bfc0dabe68228739a0341
+override namespace impl.cdm.market
+version "1.0.0"
+import cdm.base.math.DatedValue
+import cdm.base.datetime.PeriodEnum
+import cdm.base.staticdata.asset.rates.FloatingRateIndexEnum
+import cdm.observable.asset.InterestRateIndex
+import cdm.observable.asset.FloatingRateIndex
+
+func ReadMarketObservations:
+    inputs:
+        index InterestRateIndex (1..1)
+        dates date (1..*)
+    output:
+        observations DatedValue (0..*)
+    alias floating: index as FloatingRateIndex
+    alias code: floating -> floatingRateIndex
+    alias tenor: floating -> indexTenor
+    condition BenchmarkIndexSupported:
+        floating exists and (code = FloatingRateIndexEnum -> EUR_EuroSTR or code = FloatingRateIndexEnum -> EUR_EuroSTR_Compounded_Index or code = FloatingRateIndexEnum -> USD_SOFR or code = FloatingRateIndexEnum -> USD_SOFR_Compounded_Index or code = FloatingRateIndexEnum -> GBP_SONIA or code = FloatingRateIndexEnum -> GBP_SONIA_Compounded_Index)
+    condition BenchmarkTenorSupported:
+        tenor is absent or (tenor -> period = PeriodEnum -> D and tenor -> periodMultiplier = 1)
+    set observations:
+        (if code = FloatingRateIndexEnum -> EUR_EuroSTR
+        then [
+            DatedValue { date: date { year: 2026, month: 11, day: 2 }, value: 0.02441 },
+            DatedValue { date: date { year: 2026, month: 11, day: 3 }, value: 0.02445 },
+            DatedValue { date: date { year: 2026, month: 11, day: 4 }, value: 0.02442 },
+            DatedValue { date: date { year: 2026, month: 11, day: 5 }, value: 0.02442 },
+            DatedValue { date: date { year: 2026, month: 11, day: 6 }, value: 0.02443 },
+            DatedValue { date: date { year: 2026, month: 11, day: 9 }, value: 0.02442 }
+        ]
+        else if code = FloatingRateIndexEnum -> EUR_EuroSTR_Compounded_Index
+        then [
+            DatedValue { date: date { year: 2026, month: 11, day: 2 }, value: 110.1368395 },
+            DatedValue { date: date { year: 2026, month: 11, day: 3 }, value: 110.14430739 },
+            DatedValue { date: date { year: 2026, month: 11, day: 4 }, value: 110.15178803 },
+            DatedValue { date: date { year: 2026, month: 11, day: 5 }, value: 110.15925999 },
+            DatedValue { date: date { year: 2026, month: 11, day: 6 }, value: 110.16673246 },
+            DatedValue { date: date { year: 2026, month: 11, day: 9 }, value: 110.18916057 }
+        ]
+        else if code = FloatingRateIndexEnum -> USD_SOFR
+        then [
+            DatedValue { date: date { year: 2026, month: 11, day: 2 }, value: 0.0395 },
+            DatedValue { date: date { year: 2026, month: 11, day: 3 }, value: 0.0397 },
+            DatedValue { date: date { year: 2026, month: 11, day: 4 }, value: 0.0394 },
+            DatedValue { date: date { year: 2026, month: 11, day: 5 }, value: 0.0392 },
+            DatedValue { date: date { year: 2026, month: 11, day: 6 }, value: 0.0389 },
+            DatedValue { date: date { year: 2026, month: 11, day: 9 }, value: 0.0388 }
+        ]
+        else if code = FloatingRateIndexEnum -> USD_SOFR_Compounded_Index
+        then [
+            DatedValue { date: date { year: 2026, month: 11, day: 2 }, value: 1.26536948 },
+            DatedValue { date: date { year: 2026, month: 11, day: 3 }, value: 1.26550832 },
+            DatedValue { date: date { year: 2026, month: 11, day: 4 }, value: 1.26564788 },
+            DatedValue { date: date { year: 2026, month: 11, day: 5 }, value: 1.26578639 },
+            DatedValue { date: date { year: 2026, month: 11, day: 6 }, value: 1.26592422 },
+            DatedValue { date: date { year: 2026, month: 11, day: 9 }, value: 1.26633459 }
+        ]
+        else if code = FloatingRateIndexEnum -> GBP_SONIA
+        then [
+            DatedValue { date: date { year: 2026, month: 11, day: 2 }, value: 0.037352 },
+            DatedValue { date: date { year: 2026, month: 11, day: 3 }, value: 0.037342 },
+            DatedValue { date: date { year: 2026, month: 11, day: 4 }, value: 0.037335 },
+            DatedValue { date: date { year: 2026, month: 11, day: 5 }, value: 0.039824 },
+            DatedValue { date: date { year: 2026, month: 11, day: 6 }, value: 0.039852 },
+            DatedValue { date: date { year: 2026, month: 11, day: 9 }, value: 0.039842 }
+        ]
+        else if code = FloatingRateIndexEnum -> GBP_SONIA_Compounded_Index
+        then [
+            DatedValue { date: date { year: 2026, month: 11, day: 2 }, value: 121.87457567 },
+            DatedValue { date: date { year: 2026, month: 11, day: 3 }, value: 121.88704761 },
+            DatedValue { date: date { year: 2026, month: 11, day: 4 }, value: 121.89951749 },
+            DatedValue { date: date { year: 2026, month: 11, day: 5 }, value: 121.91198631 },
+            DatedValue { date: date { year: 2026, month: 11, day: 6 }, value: 121.92528774 },
+            DatedValue { date: date { year: 2026, month: 11, day: 9 }, value: 121.96522445 }
+        ]
+        else empty) filter [dates contains (item -> date)]

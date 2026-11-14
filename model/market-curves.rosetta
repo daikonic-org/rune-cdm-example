@@ -1,0 +1,129 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm.markets
+version "1.0.0"
+
+import cdm.base.datetime.*
+import cdm.base.datetime.daycount.*
+import cdm.base.staticdata.asset.rates.*
+import example.cdm.ExampleDatesIncreasing
+import example.starter.CurrencyCode
+import rune.math.*
+
+type OisQuote: <"An illustrative par OIS quote. Each instrument pays fixed coupons on every earlier pillar in this common grid; rates are annual decimals.">
+  maturityDate date (1..1)
+  parRate number (1..1)
+
+type OisMarket: <"A dated illustrative single-curve OIS market, separate from official historical fixings. No extrapolation, credit spread, collateral basis or vendor calibration conventions are implied.">
+  asOf date (1..1)
+  currency CurrencyCode (1..1)
+  benchmark FloatingRateIndexEnum (1..1)
+  quoteSetId string (1..1)
+  illustrative boolean (1..1)
+  dayCount DayCountFractionEnum (1..1)
+  quotes OisQuote (1..*)
+
+type DiscountPillar:
+  startDate date (1..1)
+  maturityDate date (1..1)
+  yearFraction number (1..1)
+  parRate number (1..1)
+  discountFactor number (1..1)
+  forwardRate number (1..1)
+  calibrationResidual number (1..1)
+
+type DiscountCurve:
+  asOf date (1..1)
+  currency CurrencyCode (1..1)
+  benchmark FloatingRateIndexEnum (1..1)
+  quoteSetId string (1..1)
+  illustrative boolean (1..1)
+  pillars DiscountPillar (1..*)
+
+func MarketYearFraction:
+  inputs:
+    start date (1..1)
+    end date (1..1)
+    convention DayCountFractionEnum (1..1)
+  output:
+    result number (1..1)
+  condition OrderedDates: end >= start
+  condition OvernightDayCount:
+    convention = DayCountFractionEnum -> ACT_360 or convention = DayCountFractionEnum -> ACT_365_FIXED
+  set result: if start = end then 0 else YearFraction(convention, start, end, empty, empty)
+
+func BootstrapOisCurve:
+  inputs:
+    market OisMarket (1..1)
+  output:
+    curve DiscountCurve (1..1)
+  condition ExplicitIllustrativeQuotes: market -> illustrative
+  condition BoundedQuoteGrid: market -> quotes count <= 40
+  condition IncreasingPillars:
+    ExampleDatesIncreasing([market -> asOf, market -> quotes -> maturityDate])
+  set curve: DiscountCurve {
+    asOf: market -> asOf, currency: market -> currency, benchmark: market -> benchmark,
+    quoteSetId: market -> quoteSetId, illustrative: market -> illustrative,
+    pillars: BootstrapOisPillars(market -> asOf, market -> dayCount, market -> quotes, empty)
+  }
+
+func BootstrapOisPillars:
+  inputs:
+    asOf date (1..1)
+    convention DayCountFractionEnum (1..1)
+    quotes OisQuote (1..*)
+    previous DiscountPillar (0..*)
+  output:
+    pillars DiscountPillar (1..*)
+  alias quote: quotes first
+  alias start: if previous exists then previous last -> maturityDate else asOf
+  alias priorDiscount: if previous exists then previous last -> discountFactor else 1
+  alias fraction: MarketYearFraction(start, quote -> maturityDate, convention)
+  alias annuity: previous extract p [p -> yearFraction * p -> discountFactor] then sum
+  alias discount: (1 - quote -> parRate * annuity) / (1 + quote -> parRate * fraction)
+  alias next: DiscountPillar {
+    startDate: start, maturityDate: quote -> maturityDate, yearFraction: fraction,
+    parRate: quote -> parRate, discountFactor: discount,
+    forwardRate: (priorDiscount / discount - 1) / fraction,
+    calibrationResidual: quote -> parRate * (annuity + fraction * discount) - (1 - discount)
+  }
+  alias accumulated: [previous, next]
+  condition PositiveCurveDenominator: 1 + quote -> parRate * fraction > 0
+  condition PositiveDiscountFactor: discount > 0
+  set pillars: if quotes count = 1 then accumulated
+    else BootstrapOisPillars(asOf, convention,
+      quotes filter [item -> maturityDate > quote -> maturityDate], accumulated)
+
+func ShiftOisQuotes:
+  inputs:
+    market OisMarket (1..1)
+    shift number (1..1)
+  output:
+    shifted OisMarket (1..1)
+  set shifted: OisMarket {
+    asOf: market -> asOf, currency: market -> currency, benchmark: market -> benchmark,
+    quoteSetId: market -> quoteSetId, illustrative: market -> illustrative, dayCount: market -> dayCount,
+    quotes: market -> quotes extract q [OisQuote { maturityDate: q -> maturityDate, parRate: q -> parRate + shift }]
+  }
+
+func DiscountOnDate: <"Log-linear interpolation of discount factors on calendar time. Exact pillars and the as-of anchor are retained; extrapolation is rejected.">
+  inputs:
+    curve DiscountCurve (1..1)
+    requested date (1..1)
+  output:
+    discount number (1..1)
+  condition WithinCurve: requested >= curve -> asOf and requested <= (curve -> pillars last -> maturityDate)
+  set discount: if requested = curve -> asOf then 1 else InterpolatedDiscount(curve, requested)
+
+func InterpolatedDiscount:
+  inputs:
+    curve DiscountCurve (1..1)
+    requested date (1..1)
+  output:
+    discount number (1..1)
+  alias right: curve -> pillars filter [maturityDate >= requested] then first
+  alias left: curve -> pillars filter [maturityDate < requested] then last
+  alias leftDate: if left exists then left -> maturityDate else curve -> asOf
+  alias leftDiscount: if left exists then left -> discountFactor else 1
+  alias weight: DateDifference(leftDate, requested) / DateDifference(leftDate, right -> maturityDate)
+  set discount: Exp(Log(leftDiscount) + weight * (Log(right -> discountFactor) - Log(leftDiscount)))

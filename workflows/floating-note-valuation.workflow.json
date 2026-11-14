@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "floating-note-valuation",
+  "name": "Value a SOFR note: bootstrap, accrual, yield and quote DV01",
+  "function": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "RosettaFunction",
+    "name": "AnalyseFloatingRateNote"
+  },
+  "inputs": {
+    "note": {
+      "kind": "example",
+      "exampleId": "floating-rate-note"
+    },
+    "market": {
+      "kind": "example",
+      "exampleId": "illustrative-ois-market"
+    },
+    "cleanPricePer100": {
+      "kind": "literal",
+      "value": 99.75
+    }
+  },
+  "outputs": {
+    "analysis": {
+      "name": "analysis",
+      "type": {
+        "model": "local",
+        "namespace": "example.cdm.markets",
+        "kind": "Data",
+        "name": "NoteAnalysis"
+      }
+    }
+  }
+}

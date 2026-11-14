@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "FacilityAnalysis"
+  },
+  "columns": 3,
+  "fields": {
+    "asOf": {
+      "order": 0,
+      "span": 1
+    },
+    "currency": {
+      "order": 1,
+      "span": 1
+    },
+    "facilityId": {
+      "order": 2,
+      "span": 1
+    },
+    "commitment": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "peakScheduledBalance": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "earnedInterest": {
+      "order": 5,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "scheduledPrincipalDue": {
+      "order": 6,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "totalScheduledDue": {
+      "order": 7,
+      "span": 2,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "balances": {
+      "order": 8,
+      "span": 3
+    },
+    "contracts": {
+      "order": 9,
+      "span": 3
+    },
+    "benchmarkCaptureId": {
+      "order": 10,
+      "span": 3
+    }
+  }
+}

@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+override namespace cdm.base.datetime
+version "1.0.0"
+
+import cdm.base.staticdata.codelist.*
+import com.opengamma.strata.basics.date.*
+
+func IsHoliday: <"Use the pinned Strata calendar's day offsets directly, avoiding conversion of every holiday to a date for each membership check. Weekends remain the responsibility of CDM IsWeekend.">
+  inputs:
+    checkDate date (1..1)
+    businessCenters BusinessCenter (0..*)
+  output:
+    isHoliday boolean (1..1)
+  alias calendars: businessCenters distinct then extract center [PinnedHolidayCalendar(center)]
+  set isHoliday: CalendarHolidays(calendars) contains CalendarDay(checkDate)

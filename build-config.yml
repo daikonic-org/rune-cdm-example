@@ -13,6 +13,7 @@ targets:
       - example.starter
       - example.cdm
       - example.cdm.implementation
+      - example.cdm.markets
     options:
       layout: per-namespace
   schema:
@@ -22,6 +23,7 @@ targets:
       - example.starter
       - example.cdm
       - example.cdm.implementation
+      - example.cdm.markets
 overrides:
   - kind: resource
     source:

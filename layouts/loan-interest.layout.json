@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "LoanInterest"
+  },
+  "columns": 3,
+  "fields": {
+    "contractId": {
+      "order": 0,
+      "span": 1
+    },
+    "borrowerId": {
+      "order": 1,
+      "span": 1
+    },
+    "notional": {
+      "order": 2,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "startDate": {
+      "order": 3,
+      "span": 1
+    },
+    "maturityDate": {
+      "order": 4,
+      "span": 1
+    },
+    "earnedThrough": {
+      "order": 5,
+      "span": 1
+    },
+    "benchmarkInterest": {
+      "order": 6,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "marginInterest": {
+      "order": 7,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "earnedInterest": {
+      "order": 8,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "roundedInterest": {
+      "order": 9,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "scheduledPrincipalDue": {
+      "order": 10,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "totalScheduledDue": {
+      "order": 11,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "margin": {
+      "order": 12,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 6,
+        "grouping": true
+      }
+    },
+    "yearFraction": {
+      "order": 13,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 8,
+        "grouping": true
+      }
+    },
+    "growth": {
+      "order": 14,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10,
+        "grouping": true
+      }
+    },
+    "indexComparisonAvailable": {
+      "order": 15,
+      "span": 1
+    },
+    "officialIndexGrowth": {
+      "order": 16,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10,
+        "grouping": true
+      }
+    },
+    "indexGrowthDifference": {
+      "order": 17,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 14,
+        "grouping": true
+      }
+    },
+    "observations": {
+      "order": 18,
+      "span": 3
+    }
+  }
+}

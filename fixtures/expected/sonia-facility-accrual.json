@@ -1,0 +1,104 @@
+{
+  "asOf": "2026-11-09",
+  "currency": "GBP",
+  "benchmarkCaptureId": "74ac453b49dd1eb0ae6a33c0e58036a767ff19197b830fe3e489413b0876a707",
+  "facilityId": "facility-sonia-demo",
+  "commitment": 2000000,
+  "peakScheduledBalance": 1500000,
+  "balances": [
+    {
+      "date": "2026-11-02",
+      "drawdowns": 1000000,
+      "scheduledRepayments": 0,
+      "scheduledBalance": 1000000,
+      "availableCommitment": 1000000
+    },
+    {
+      "date": "2026-11-04",
+      "drawdowns": 500000,
+      "scheduledRepayments": 0,
+      "scheduledBalance": 1500000,
+      "availableCommitment": 500000
+    },
+    {
+      "date": "2026-11-09",
+      "drawdowns": 0,
+      "scheduledRepayments": 1500000,
+      "scheduledBalance": 0,
+      "availableCommitment": 2000000
+    }
+  ],
+  "contracts": [
+    {
+      "contractId": "drawdown-a",
+      "borrowerId": "borrower",
+      "startDate": "2026-11-02",
+      "maturityDate": "2026-11-09",
+      "earnedThrough": "2026-11-09",
+      "notional": 1000000,
+      "yearFraction": 0.019178082191780823,
+      "observations": {
+        "observations": {
+          "observationDates": ["2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06"],
+          "weights": [1, 1, 1, 1, 3],
+          "observedRates": [0.037352, 0.037342, 0.037335, 0.039824, 0.039852]
+        },
+        "growthFactor": [
+          1.0001023342465754, 1.0001023068493151, 1.0001022876712329, 1.000109106849315, 1.0003275506849314
+        ],
+        "compoundedGrowth": [
+          1, 1.0001023342465754, 1.0002046515653849, 1.0003069601699497, 1.0004161005107217, 1.0007437874896605
+        ],
+        "aggregateValue": 1.0007437874896605,
+        "aggregateWeight": 7,
+        "calculatedRate": 0.03878320481801335
+      },
+      "growth": 1.0007437874896605,
+      "margin": 0.015,
+      "benchmarkInterest": 743.7874896605301,
+      "marginInterest": 287.67123287671234,
+      "earnedInterest": 1031.4587225372425,
+      "roundedInterest": 1031.46,
+      "scheduledPrincipalDue": 1000000,
+      "totalScheduledDue": 1001031.46,
+      "indexComparisonAvailable": true,
+      "officialIndexGrowth": 1.0007437874511698,
+      "indexGrowthDifference": 3.84907661299394e-11
+    },
+    {
+      "contractId": "drawdown-b",
+      "borrowerId": "borrower",
+      "startDate": "2026-11-04",
+      "maturityDate": "2026-11-09",
+      "earnedThrough": "2026-11-09",
+      "notional": 500000,
+      "yearFraction": 0.0136986301369863,
+      "observations": {
+        "observations": {
+          "observationDates": ["2026-11-04", "2026-11-05", "2026-11-06"],
+          "weights": [1, 1, 3],
+          "observedRates": [0.037335, 0.039824, 0.039852]
+        },
+        "growthFactor": [1.0001022876712329, 1.000109106849315, 1.0003275506849314],
+        "compoundedGrowth": [1, 1.0001022876712329, 1.0002114056808333, 1.0005390256118405],
+        "aggregateValue": 1.0005390256118405,
+        "aggregateWeight": 5,
+        "calculatedRate": 0.03934886966435602
+      },
+      "growth": 1.0005390256118405,
+      "margin": 0.0175,
+      "benchmarkInterest": 269.5128059202467,
+      "marginInterest": 119.86301369863013,
+      "earnedInterest": 389.37581961887685,
+      "roundedInterest": 389.38,
+      "scheduledPrincipalDue": 500000,
+      "totalScheduledDue": 500389.38,
+      "indexComparisonAvailable": true,
+      "officialIndexGrowth": 1.0005390255954492,
+      "indexGrowthDifference": 1.639133273556581e-11
+    }
+  ],
+  "earnedInterest": 1420.8345421561194,
+  "scheduledPrincipalDue": 1500000,
+  "totalScheduledDue": 1501420.8399999999
+}

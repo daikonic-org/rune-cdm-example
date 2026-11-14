@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "sonia-facility",
+  "name": "FpML SONIA facility with two funded contracts",
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "SoniaFacility"
+  },
+  "payload": "examples/sonia-facility.json",
+  "codec": "RUNE_JSON",
+  "provenance": {
+    "source": "Authored financing terms using the pinned fpml.consolidated.loan FacilitySummary and LoanContract types. Official SONIA observations and index levels are pinned separately in model/benchmark-data."
+  }
+}
