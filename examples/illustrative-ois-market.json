@@ -1,0 +1,26 @@
+{
+  "asOf": "2026-11-06",
+  "currency": "USD",
+  "benchmark": "USD-SOFR",
+  "quoteSetId": "illustrative-usd-ois-2026-11-06-v1",
+  "illustrative": true,
+  "dayCount": "ACT/360",
+  "quotes": [
+    {
+      "maturityDate": "2027-02-02",
+      "parRate": 0.039
+    },
+    {
+      "maturityDate": "2027-05-03",
+      "parRate": 0.038
+    },
+    {
+      "maturityDate": "2027-08-02",
+      "parRate": 0.0375
+    },
+    {
+      "maturityDate": "2027-11-02",
+      "parRate": 0.037
+    }
+  ]
+}

@@ -4,7 +4,9 @@ A Rune workspace generated from the [rune-starter template](https://github.com/d
 with a pinned CDM release and runnable examples for swap qualification, product
 reset and repayment schedules, accruals, fixed/floating coupons, compounding and
 cash amount changes. Start with the [CDM walkthrough](README.cdm.md) or
-the [product calculation workflows](README.calculations.md).
+the [product calculation workflows](README.calculations.md). The
+[market-data examples](README.market-data.md) add Compose/Prototype note
+valuation and an FpML SONIA loan facility using pinned official observations.
 The inherited **Double quote** workflow remains available without a reference download.
 
 ## Start in Rune Studio
@@ -29,18 +31,18 @@ repositories; later template changes are not pulled automatically.
 
 ## Workspace files
 
-| Path | Purpose |
-| --- | --- |
-| `rune-config.yml` | Upstream-compatible model name, version, and serialization defaults. |
-| `build-config.yml` | Named native TypeScript and JSON Schema targets; no default target. |
-| `studio-config.yml` | Portable example, workflow, and layout directories. |
-| `model/` | Editable Rune declarations and implementations. |
-| `examples/` | Typed example descriptors and JSON inputs. |
-| `workflows/` | Saved function selection and input bindings. |
-| `layouts/` | Shared form layout and control formatting. |
-| `fixtures/expected/` | Intentional checked output fixtures. |
-| `resources/` | Pinned currency code list and its upstream license. |
-| `.rune-toolchain.json` | Exact source revision and runtime versions used by CI. |
+| Path                   | Purpose                                                              |
+| ---------------------- | -------------------------------------------------------------------- |
+| `rune-config.yml`      | Upstream-compatible model name, version, and serialization defaults. |
+| `build-config.yml`     | Named native TypeScript and JSON Schema targets; no default target.  |
+| `studio-config.yml`    | Portable example, workflow, and layout directories.                  |
+| `model/`               | Editable Rune declarations and implementations.                      |
+| `examples/`            | Typed example descriptors and JSON inputs.                           |
+| `workflows/`           | Saved function selection and input bindings.                         |
+| `layouts/`             | Shared form layout and control formatting.                           |
+| `fixtures/expected/`   | Intentional checked output fixtures.                                 |
+| `resources/`           | Pinned currency code list and its upstream license.                  |
+| `.rune-toolchain.json` | Exact source revision and runtime versions used by CI.               |
 
 Generated code, ordinary exports, installed dependencies, and private Studio
 state are ignored by Git. Credentials and personal panel state do not belong in

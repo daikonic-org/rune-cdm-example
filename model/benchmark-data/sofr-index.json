@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "series": "sofr-index",
+  "window": {
+    "startDate": "2026-11-02",
+    "endDate": "2026-11-09"
+  },
+  "source": {
+    "url": "https://markets.newyorkfed.org/api/rates/secured/sofrai/search.json?startDate=2026-11-02&endDate=2026-11-09",
+    "retrievedAt": "2026-11-14T04:27:46.734Z",
+    "sha256": "a016af81116866728aa378ecfeb4f9e11f863104498d71e8224a2e1cfcbfc925"
+  },
+  "content": "{ \"refRates\": [ { \"effectiveDate\": \"2026-11-09\", \"type\": \"SOFRAI\" ,\"average30day\": 3.91461 ,\"average90day\": 3.80772 ,\"average180day\": 3.73568 ,\"index\": 1.26633459 ,\"revisionIndicator\": \"\" }, { \"effectiveDate\": \"2026-11-06\", \"type\": \"SOFRAI\" ,\"average30day\": 3.91294 ,\"average90day\": 3.79876 ,\"average180day\": 3.73077 ,\"index\": 1.26592422 ,\"revisionIndicator\": \"\" }, { \"effectiveDate\": \"2026-11-05\", \"type\": \"SOFRAI\" ,\"average30day\": 3.91227 ,\"average90day\": 3.79539 ,\"average180day\": 3.72896 ,\"index\": 1.26578639 ,\"revisionIndicator\": \"\" }, { \"effectiveDate\": \"2026-11-04\", \"type\": \"SOFRAI\" ,\"average30day\": 3.91060 ,\"average90day\": 3.79213 ,\"average180day\": 3.72703 ,\"index\": 1.26564788 ,\"revisionIndicator\": \"\" }, { \"effectiveDate\": \"2026-11-03\", \"type\": \"SOFRAI\" ,\"average30day\": 3.90759 ,\"average90day\": 3.78843 ,\"average180day\": 3.72493 ,\"index\": 1.26550832 ,\"revisionIndicator\": \"\" }, { \"effectiveDate\": \"2026-11-02\", \"type\": \"SOFRAI\" ,\"average30day\": 3.90524 ,\"average90day\": 3.78518 ,\"average180day\": 3.72301 ,\"index\": 1.26536948 ,\"revisionIndicator\": \"\" } ] }"
+}

@@ -1,0 +1,135 @@
+{
+  "security": {
+    "identifier": [
+      {
+        "identifier": {
+          "@data": "DEMO-SOFR-FRN"
+        },
+        "identifierType": "Other"
+      }
+    ],
+    "assetType": "Security",
+    "securityType": "Debt"
+  },
+  "payout": {
+    "@type": "cdm.product.asset.InterestRatePayout",
+    "payerReceiver": {
+      "payer": "Party1",
+      "receiver": "Party2"
+    },
+    "priceQuantity": {
+      "quantitySchedule": {
+        "value": 1000000,
+        "unit": {
+          "currency": {
+            "@data": "USD"
+          }
+        }
+      }
+    },
+    "rateSpecification": {
+      "@type": "cdm.product.asset.FloatingRateSpecification",
+      "rateOption": {
+        "@type": "cdm.observable.asset.FloatingRateIndex",
+        "assetClass": "InterestRate",
+        "floatingRateIndex": {
+          "@data": "USD-SOFR"
+        },
+        "assetType": "Other",
+        "identifier": [
+          {
+            "identifier": {
+              "@data": "USD-SOFR"
+            },
+            "identifierType": "Other"
+          }
+        ]
+      },
+      "calculationParameters": {
+        "calculationMethod": "Compounding",
+        "applicableBusinessDays": {
+          "businessCenter": ["USGS"]
+        }
+      },
+      "spreadSchedule": {
+        "price": {
+          "value": 0.0025,
+          "unit": {
+            "currency": {
+              "@data": "USD"
+            }
+          },
+          "perUnitOf": {
+            "currency": {
+              "@data": "USD"
+            }
+          },
+          "priceType": "InterestRate"
+        }
+      }
+    },
+    "dayCountFraction": {
+      "@data": "ACT/360"
+    },
+    "calculationPeriodDates": {
+      "effectiveDate": {
+        "adjustableDate": {
+          "unadjustedDate": "2026-11-02",
+          "dateAdjustments": {
+            "businessDayConvention": "NONE"
+          }
+        }
+      },
+      "terminationDate": {
+        "adjustableDate": {
+          "unadjustedDate": "2027-11-02",
+          "dateAdjustments": {
+            "businessDayConvention": "NONE"
+          }
+        }
+      },
+      "calculationPeriodDatesAdjustments": {
+        "businessDayConvention": "MODFOLLOWING",
+        "businessCenters": {
+          "businessCenter": ["USGS"]
+        }
+      },
+      "calculationPeriodFrequency": {
+        "periodMultiplier": 3,
+        "period": "M",
+        "rollConvention": "2"
+      }
+    },
+    "paymentDates": {
+      "paymentFrequency": {
+        "periodMultiplier": 3,
+        "period": "M"
+      },
+      "payRelativeTo": "CalculationPeriodEndDate",
+      "paymentDatesAdjustments": {
+        "businessDayConvention": "MODFOLLOWING",
+        "businessCenters": {
+          "businessCenter": ["USGS"]
+        }
+      }
+    },
+    "resetDates": {
+      "resetRelativeTo": "CalculationPeriodEndDate",
+      "fixingDates": {
+        "periodMultiplier": -2,
+        "period": "D",
+        "dayType": "Business",
+        "businessDayConvention": "NONE",
+        "businessCenters": {
+          "businessCenter": ["USGS"]
+        }
+      },
+      "resetDatesAdjustments": {
+        "businessDayConvention": "MODFOLLOWING",
+        "businessCenters": {
+          "businessCenter": ["USGS"]
+        }
+      }
+    }
+  }
+}

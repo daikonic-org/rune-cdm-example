@@ -48,6 +48,7 @@ jobs:
         env:
           RUNE_TOOLCHAIN: ${{ github.workspace }}/rune-langium
         run: |
+          node --test scripts/market-data.test.mjs
           node scripts/check-product-calculations.mjs
           node scripts/check-rune-implementation.mjs
           node scripts/check-native-implementation.mjs

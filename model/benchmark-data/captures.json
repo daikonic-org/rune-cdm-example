@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "captureSetId": "74ac453b49dd1eb0ae6a33c0e58036a767ff19197b830fe3e489413b0876a707",
+  "window": {
+    "startDate": "2026-11-02",
+    "endDate": "2026-11-09"
+  },
+  "captures": [
+    {
+      "series": "sofr",
+      "id": "50333c307ddff2daf2f06048a5d52f32f5f608946681c329d2e3dd17b4f29ca4",
+      "sourceHash": "d8efd93df6c40a8e5753833115ad46033c61a755298daec00bdbfe0e8c2d5ec6",
+      "observations": 6
+    },
+    {
+      "series": "sonia",
+      "id": "f8bce9d02a51c7c26db8d2c2643636cff5bbd301066b4d1488e2e2147ad21d0f",
+      "sourceHash": "c1c392221dd7d831987be7b82d91f823c0fe4a01962c547d34fbbf69fac8787a",
+      "observations": 6
+    },
+    {
+      "series": "estr",
+      "id": "332480b3f8cefd6e2695e56c198ad8ba3adfbc355d549af9ea65a0336a1bb094",
+      "sourceHash": "64be45b08eced3f6c0c25f00c409509b88c84182267af84db162b5454edeb03f",
+      "observations": 6
+    },
+    {
+      "series": "sofr-index",
+      "id": "85208738ddaa4d9522f5f8440ebb9a21260fd029d9faf533ac24b9830e089cf0",
+      "sourceHash": "a016af81116866728aa378ecfeb4f9e11f863104498d71e8224a2e1cfcbfc925",
+      "observations": 6
+    },
+    {
+      "series": "sonia-index",
+      "id": "cb14a38fe4640a1f9f230360b097cd6ab8e34d5e623e0d837328dbcf56f54a0e",
+      "sourceHash": "31b5976f2765701a2e82bdd6c3fed1d4e32866d9a05bfc0dabe68228739a0341",
+      "observations": 6
+    },
+    {
+      "series": "estr-index",
+      "id": "bbb4a48e592d25c4eb6c0bfcd95a6d3e4ebd693a9e1e757e08d65c013d84dea6",
+      "sourceHash": "7f2ade10408d9d85b575f143f3a94ee131014d2e4445893ebc5c13d12f129c5f",
+      "observations": 6
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "series": "estr-index",
+  "window": {
+    "startDate": "2026-11-02",
+    "endDate": "2026-11-09"
+  },
+  "source": {
+    "url": "https://data-api.ecb.europa.eu/service/data/EST/B.EU000A2QQF08.CI?startPeriod=2026-11-02&endPeriod=2026-11-09&format=csvdata",
+    "retrievedAt": "2026-11-14T04:27:58.888Z",
+    "sha256": "7f2ade10408d9d85b575f143f3a94ee131014d2e4445893ebc5c13d12f129c5f",
+    "lastModified": "Fri, 13 Nov 2026 08:20:50 GMT"
+  },
+  "content": "KEY,FREQ,BENCHMARK_ITEM,DATA_TYPE_EST,TIME_PERIOD,OBS_VALUE,OBS_STATUS,CONF_STATUS,PRE_BREAK_VALUE,COMMENT_OBS,CALCUL_START_DATE,CALCUL_END_DATE,TIME_FORMAT,BREAKS,COMMENT_TS,COMPILING_ORG,COVERAGE,DATA_COMP,DECIMALS,DISS_ORG,PUBL_ECB,PUBL_MU,PUBL_PUBLIC,TIME_PER_COLLECT,TITLE,TITLE_COMPL,UNIT_INDEX_BASE,UNIT_MEASURE,UNIT_MULT\r\nEST.B.EU000A2QQF08.CI,B,EU000A2QQF08,CI,2026-11-02,110.1368395,A,F,,,,,P1D,,,,\"ESA 2010 Sectors: S.121, S.122, S.123, S.124, S.125, S.126, S.127, S.128, S.129\",,8,,,,,V,Compounded euro short-term rate index (1 Oct 2019 = 100),Compounded euro short-term rate index (1 Oct 2019 = 100),,IX,0\r\nEST.B.EU000A2QQF08.CI,B,EU000A2QQF08,CI,2026-11-03,110.14430739,A,F,,,,,P1D,,,,\"ESA 2010 Sectors: S.121, S.122, S.123, S.124, S.125, S.126, S.127, S.128, S.129\",,8,,,,,V,Compounded euro short-term rate index (1 Oct 2019 = 100),Compounded euro short-term rate index (1 Oct 2019 = 100),,IX,0\r\nEST.B.EU000A2QQF08.CI,B,EU000A2QQF08,CI,2026-11-04,110.15178803,A,F,,,,,P1D,,,,\"ESA 2010 Sectors: S.121, S.122, S.123, S.124, S.125, S.126, S.127, S.128, S.129\",,8,,,,,V,Compounded euro short-term rate index (1 Oct 2019 = 100),Compounded euro short-term rate index (1 Oct 2019 = 100),,IX,0\r\nEST.B.EU000A2QQF08.CI,B,EU000A2QQF08,CI,2026-11-05,110.15925999,A,F,,,,,P1D,,,,\"ESA 2010 Sectors: S.121, S.122, S.123, S.124, S.125, S.126, S.127, S.128, S.129\",,8,,,,,V,Compounded euro short-term rate index (1 Oct 2019 = 100),Compounded euro short-term rate index (1 Oct 2019 = 100),,IX,0\r\nEST.B.EU000A2QQF08.CI,B,EU000A2QQF08,CI,2026-11-06,110.16673246,A,F,,,,,P1D,,,,\"ESA 2010 Sectors: S.121, S.122, S.123, S.124, S.125, S.126, S.127, S.128, S.129\",,8,,,,,V,Compounded euro short-term rate index (1 Oct 2019 = 100),Compounded euro short-term rate index (1 Oct 2019 = 100),,IX,0\r\nEST.B.EU000A2QQF08.CI,B,EU000A2QQF08,CI,2026-11-09,110.18916057,A,F,,,,,P1D,,,,\"ESA 2010 Sectors: S.121, S.122, S.123, S.124, S.125, S.126, S.127, S.128, S.129\",,8,,,,,V,Compounded euro short-term rate index (1 Oct 2019 = 100),Compounded euro short-term rate index (1 Oct 2019 = 100),,IX,0\r\n"
+}

@@ -1,0 +1,219 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm.markets
+version "1.0.0"
+
+import cdm.base.datetime.*
+import cdm.base.datetime.daycount.*
+import cdm.base.math.*
+import cdm.base.staticdata.asset.common.*
+import cdm.base.staticdata.asset.rates.*
+import cdm.observable.asset.*
+import cdm.observable.asset.calculatedrate.*
+import cdm.product.asset.floatingrate.*
+import impl.cdm.market.*
+import rune.studio.*
+
+type SoniaFacility: <"The existing pinned FpML facility and funded loan contracts. Each contract has one complete interest period and a scheduled bullet principal repayment; no new copy of the FpML loan schema is defined here.">
+  facility fpml.consolidated.loan.FacilitySummary (1..1)
+  contracts fpml.consolidated.loan.LoanContract (1..*)
+
+type FacilityBalance:
+  date date (1..1)
+  drawdowns number (1..1)
+  scheduledRepayments number (1..1)
+  scheduledBalance number (1..1)
+  availableCommitment number (1..1)
+
+type LoanInterest:
+  contractId string (1..1)
+  borrowerId string (1..1)
+  startDate date (1..1)
+  maturityDate date (1..1)
+  earnedThrough date (1..1)
+  notional number (1..1)
+  yearFraction number (1..1)
+  observations CalculatedRateDetails (0..1)
+  growth number (1..1)
+  margin number (1..1)
+  benchmarkInterest number (1..1)
+  marginInterest number (1..1)
+  earnedInterest number (1..1) <"Earned to the as-of date, capped at maturity. This is not an unpaid-interest balance.">
+  roundedInterest number (1..1)
+  scheduledPrincipalDue number (1..1)
+  totalScheduledDue number (1..1)
+  indexComparisonAvailable boolean (1..1)
+  officialIndexGrowth number (0..1)
+  indexGrowthDifference number (0..1) <"Published index precision can leave a small difference from daily compounding.">
+
+type FacilityAnalysis:
+  asOf date (1..1)
+  currency string (1..1)
+  benchmarkCaptureId string (1..1)
+  facilityId string (1..1)
+  commitment number (1..1)
+  peakScheduledBalance number (1..1)
+  balances FacilityBalance (1..*)
+  contracts LoanInterest (1..*)
+  earnedInterest number (1..1)
+  scheduledPrincipalDue number (1..1)
+  totalScheduledDue number (1..1)
+
+func SoniaIndex:
+  inputs:
+    code FloatingRateIndexEnum (1..1)
+  output:
+    index InterestRateIndex (1..1)
+  set index: InterestRateIndex { FloatingRateIndex: FloatingRateIndex {
+    floatingRateIndex: code, assetType: AssetTypeEnum -> Other, assetClass: AssetClassEnum -> InterestRate,
+    identifier: AssetIdentifier { identifier: "GBP-SONIA", identifierType: AssetIdTypeEnum -> Other }
+  } }
+
+func SoniaCompoundingParameters:
+  output:
+    parameters FloatingRateCalculationParameters (1..1)
+  set parameters: FloatingRateCalculationParameters {
+    calculationMethod: CalculationMethodEnum -> Compounding,
+    applicableBusinessDays: BusinessCenters { businessCenter: "GBLO" }, ...
+  }
+
+func SoniaIndexGrowth: <"Compare published endpoints only when both exist. A weekend/as-of date without an index is reported as unavailable; no endpoint is filled or interpolated.">
+  inputs:
+    start date (1..1)
+    end date (1..1)
+  output:
+    growth number (0..1)
+  alias observations: ReadMarketObservations(SoniaIndex(FloatingRateIndexEnum -> GBP_SONIA_Compounded_Index), [start, end])
+  condition PositivePublishedIndex: observations -> value all > 0
+  set growth: if observations -> date contains start and observations -> date contains end
+    then MarketObservationOnDate(observations, end) -> value / MarketObservationOnDate(observations, start) -> value
+    else empty
+
+func LoanContractInterest:
+  inputs:
+    contract fpml.consolidated.loan.LoanContract (1..1)
+    asOf date (1..1)
+  output:
+    interest LoanInterest (1..1)
+  alias terms: contract -> floatingRateAccrual
+  alias rate: terms -> rate
+  alias parameters: rate -> calculationParameters
+  alias start: terms -> startDate -> date
+  alias end: terms -> endDate -> date
+  alias cut: if asOf < start then start else if asOf < end then asOf else end
+  alias notional: contract -> amount -> amount
+  alias spread: rate -> spreadSchedule only-element
+  alias margin: spread -> initialValue
+  alias details: if cut > start then ObserveOvernightPeriod(SoniaIndex(FloatingRateIndexEnum -> GBP_SONIA),
+    start, cut, SoniaCompoundingParameters(), DayCountFractionEnum -> ACT_365_FIXED) else empty
+  alias growth: if details exists then details -> compoundedGrowth last else 1
+  alias fraction: MarketYearFraction(start, cut, DayCountFractionEnum -> ACT_365_FIXED)
+  alias earned: notional * (growth - 1) + notional * margin * fraction
+  alias rounded: RoundToPrecision(earned, 2, RoundingDirectionEnum -> Nearest, True)
+  alias principalDue: if asOf >= end then notional else 0
+  alias indexGrowth: if cut > start then SoniaIndexGrowth(start, cut) else empty
+  condition FundedBulletPeriod:
+    terms exists and contract -> id exists and notional > 0
+      and start = contract -> effectiveDate -> date and end = contract -> maturityDate -> date
+      and end > start and terms -> numberOfDays = DateDifference(start, end)
+      and contract -> fixedRateAccrual is absent and contract -> legacyFloatingRateAccrual is absent
+      and contract -> facilityFxRate is absent and contract -> amount -> shareAmount is absent
+  condition SupportedSoniaLoan:
+    contract -> amount -> currency -> value = "GBP"
+      and terms -> dayCountFraction -> value = "ACT/365.FIXED"
+      and rate -> floatingRateIndex -> value = "GBP-SONIA"
+      and rate -> indexTenor is absent and rate -> spreadTenor is absent
+      and rate -> fallbackRate is absent
+      and (rate -> isCompoundingBalance is absent or rate -> isCompoundingBalance = False)
+      and rate -> spreadAdjustment is absent and rate -> allInRateLimits is absent
+      and parameters -> calculationMethod = fpml.consolidated.fpmlenum.CalculationMethodEnum -> Compounding
+      and parameters -> applicableBusinessDays -> businessCentersReference is absent
+      and parameters -> applicableBusinessDays -> businessCenters -> businessCenter count = 1
+      and parameters -> applicableBusinessDays -> businessCenters -> businessCenter -> value all = "GBLO"
+      and parameters -> lookback is absent and parameters -> observationShift is absent and parameters -> lockout is absent
+      and parameters -> observationCapRate is absent and parameters -> observationFloorRate is absent
+  condition SimpleContractualMargin:
+    rate -> spreadSchedule count = 1 and spread -> step is absent and spread -> ^type is absent
+      and rate -> capRateSchedule is absent and rate -> floorRateSchedule is absent
+      and rate -> floatingRateMultiplierSchedule is absent and rate -> rateTreatment is absent
+      and terms -> pikSpread is absent and terms -> fundingLossSpread is absent
+      and terms -> defaultSpread is absent and terms -> mandatoryCostRate is absent
+      and terms -> baseRate is absent and terms -> allInRate is absent
+  set interest: LoanInterest {
+    contractId: contract -> id, borrowerId: contract -> borrowerPartyReference -> href,
+    startDate: start, maturityDate: end, earnedThrough: cut, notional: notional, yearFraction: fraction,
+    observations: details, growth: growth, margin: margin,
+    benchmarkInterest: notional * (growth - 1), marginInterest: notional * margin * fraction,
+    earnedInterest: earned, roundedInterest: rounded, scheduledPrincipalDue: principalDue,
+    totalScheduledDue: if asOf >= end then principalDue + rounded else 0,
+    indexComparisonAvailable: indexGrowth exists,
+    officialIndexGrowth: indexGrowth, indexGrowthDifference: if indexGrowth exists then growth - indexGrowth else empty
+  }
+
+func FacilityBalanceOnDate:
+  inputs:
+    book SoniaFacility (1..1)
+    requested date (1..1)
+  output:
+    balance FacilityBalance (1..1)
+  alias drawn: book -> contracts filter [effectiveDate -> date = requested] then amount -> amount sum
+  alias repaid: book -> contracts filter [maturityDate -> date = requested] then amount -> amount sum
+  alias outstanding: book -> contracts filter [effectiveDate -> date <= requested and maturityDate -> date > requested]
+    then amount -> amount sum
+  alias limit: book -> facility -> currentCommitment -> totalCommitmentAmount -> amount
+  condition CommitmentCapacity: outstanding <= limit
+  set balance: FacilityBalance {
+    date: requested, drawdowns: drawn, scheduledRepayments: repaid,
+    scheduledBalance: outstanding, availableCommitment: limit - outstanding
+  }
+
+func FacilityBalances:
+  inputs:
+    book SoniaFacility (1..1)
+  output:
+    balances FacilityBalance (1..*)
+  alias dates: [book -> contracts -> effectiveDate -> date, book -> contracts -> maturityDate -> date] then distinct then sort
+  condition MatchingFacilityContracts:
+    book -> facility -> id exists
+      and book -> contracts -> id count = book -> contracts count
+      and book -> contracts -> id distinct count = book -> contracts count
+      and book -> contracts -> facilityReference -> href all = book -> facility -> id
+      and book -> contracts -> borrowerPartyReference -> href all = book -> facility -> borrowerPartyReference -> href
+      and book -> facility -> currentCommitment -> totalCommitmentAmount -> currency -> value = "GBP"
+      and book -> facility -> commitmentSchedule is absent and book -> facility -> dealFxRate is absent
+  set balances: dates extract d [FacilityBalanceOnDate(book, d)]
+
+func SoniaFacilityInterests:
+  inputs:
+    book SoniaFacility (1..1)
+    asOf date (1..1)
+  output:
+    interests LoanInterest (1..*)
+  set interests: book -> contracts extract c [LoanContractInterest(c, asOf)]
+
+func AssembleFacilityAnalysis:
+  inputs:
+    book SoniaFacility (1..1)
+    asOf date (1..1)
+    balances FacilityBalance (1..*)
+    interests LoanInterest (1..*)
+  output:
+    analysis FacilityAnalysis (1..1)
+  set analysis: FacilityAnalysis {
+    asOf: asOf, currency: "GBP", benchmarkCaptureId: BenchmarkCaptureSetId(), facilityId: book -> facility -> id,
+    commitment: book -> facility -> currentCommitment -> totalCommitmentAmount -> amount,
+    peakScheduledBalance: balances sort [scheduledBalance] then last -> scheduledBalance,
+    balances: balances, contracts: interests, earnedInterest: interests -> earnedInterest sum,
+    scheduledPrincipalDue: interests -> scheduledPrincipalDue sum, totalScheduledDue: interests -> totalScheduledDue sum
+  }
+
+func AnalyseSoniaFacility:
+  [composition]
+  inputs:
+    book SoniaFacility (1..1)
+    asOf date (1..1)
+  output:
+    analysis FacilityAnalysis (1..1)
+  alias balances: FacilityBalances(book)
+  alias interests: SoniaFacilityInterests(book, asOf)
+  set analysis: AssembleFacilityAnalysis(book, asOf, balances, interests)

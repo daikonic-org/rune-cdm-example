@@ -1,0 +1,122 @@
+{
+  "asOf": "2026-11-06",
+  "currency": "USD",
+  "benchmarkCaptureId": "74ac453b49dd1eb0ae6a33c0e58036a767ff19197b830fe3e489413b0876a707",
+  "curve": {
+    "asOf": "2026-11-06",
+    "currency": "USD",
+    "benchmark": "USD_SOFR",
+    "quoteSetId": "illustrative-usd-ois-2026-11-06-v1",
+    "illustrative": true,
+    "pillars": [
+      {
+        "startDate": "2026-11-06",
+        "maturityDate": "2027-02-02",
+        "yearFraction": 0.24444444444444444,
+        "parRate": 0.039,
+        "discountFactor": 0.990556692861388,
+        "forwardRate": 0.03900000000000025,
+        "calibrationResidual": -6.765421556309548e-17
+      },
+      {
+        "startDate": "2027-02-02",
+        "maturityDate": "2027-05-03",
+        "yearFraction": 0.25,
+        "parRate": 0.038,
+        "discountFactor": 0.9814748181692573,
+        "forwardRate": 0.03701317455733033,
+        "calibrationResidual": -8.326672684688674e-17
+      },
+      {
+        "startDate": "2027-05-03",
+        "maturityDate": "2027-08-02",
+        "yearFraction": 0.25277777777777777,
+        "parRate": 0.0375,
+        "discountFactor": 0.9725000802180337,
+        "forwardRate": 0.036508436915558905,
+        "calibrationResidual": -2.42861286636753e-17
+      },
+      {
+        "startDate": "2027-08-02",
+        "maturityDate": "2027-11-02",
+        "yearFraction": 0.25555555555555554,
+        "parRate": 0.037,
+        "discountFactor": 0.9637539171100086,
+        "forwardRate": 0.03551126060508375,
+        "calibrationResidual": -5.551115123125783e-17
+      }
+    ]
+  },
+  "cashflows": [
+    {
+      "accrualStart": "2026-11-02",
+      "accrualEnd": "2027-02-02",
+      "paymentDate": "2027-02-02",
+      "yearFraction": 0.25555555555555554,
+      "notional": 1000000,
+      "realizedGrowth": 1.0004384053891373,
+      "projectedGrowth": 1.0095333333333334,
+      "appliedRate": 0.0415362,
+      "interest": 10614.806666666665,
+      "principal": 0,
+      "total": 10614.806666666665,
+      "discountFactor": 0.990556692861388,
+      "presentValue": 10514.567787096346
+    },
+    {
+      "accrualStart": "2027-02-02",
+      "accrualEnd": "2027-05-02",
+      "paymentDate": "2027-05-03",
+      "yearFraction": 0.24722222222222223,
+      "notional": 1000000,
+      "realizedGrowth": 1,
+      "projectedGrowth": 1.009150010325416,
+      "appliedRate": 0.0395113,
+      "interest": 9768.071388888888,
+      "principal": 0,
+      "total": 9768.071388888888,
+      "discountFactor": 0.9814748181692573,
+      "presentValue": 9587.116090274045
+    },
+    {
+      "accrualStart": "2027-05-02",
+      "accrualEnd": "2027-08-02",
+      "paymentDate": "2027-08-02",
+      "yearFraction": 0.25555555555555554,
+      "notional": 1000000,
+      "realizedGrowth": 1,
+      "projectedGrowth": 1.0093318129029478,
+      "appliedRate": 0.0390158,
+      "interest": 9970.704444444444,
+      "principal": 0,
+      "total": 9970.704444444444,
+      "discountFactor": 0.9725000802180337,
+      "presentValue": 9696.510872052526
+    },
+    {
+      "accrualStart": "2027-08-02",
+      "accrualEnd": "2027-11-02",
+      "paymentDate": "2027-11-02",
+      "yearFraction": 0.25555555555555554,
+      "notional": 1000000,
+      "realizedGrowth": 1,
+      "projectedGrowth": 1.0090750999324103,
+      "appliedRate": 0.0380113,
+      "interest": 9713.998888888887,
+      "principal": 1000000,
+      "total": 1009713.9988888889,
+      "discountFactor": 0.9637539171100086,
+      "presentValue": 973115.8215899775
+    }
+  ],
+  "accruedInterest": 466.18333333333334,
+  "presentValue": 1002914.0163394004,
+  "modelCleanPricePer100": 100.24478330060671,
+  "settlementAmount": 997966.1833333333,
+  "netPresentValue": 4947.833006067085,
+  "annualEffectiveYield": 0.04333279489913677,
+  "yieldPriceResidual": 2.3283064365386963e-10,
+  "quoteDv01": 0.14661775948479772,
+  "downPresentValue": 1002914.1385108476,
+  "upPresentValue": 1002913.8452753286
+}

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "NoteCashflow"
+  },
+  "columns": 3,
+  "fields": {
+    "accrualStart": {
+      "order": 0,
+      "span": 1
+    },
+    "accrualEnd": {
+      "order": 1,
+      "span": 1
+    },
+    "paymentDate": {
+      "order": 2,
+      "span": 1
+    },
+    "interest": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "principal": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "presentValue": {
+      "order": 5,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "notional": {
+      "order": 6,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "total": {
+      "order": 7,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "appliedRate": {
+      "order": 8,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 8,
+        "grouping": true
+      }
+    },
+    "yearFraction": {
+      "order": 9,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 8,
+        "grouping": true
+      }
+    },
+    "discountFactor": {
+      "order": 10,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10,
+        "grouping": true
+      }
+    },
+    "realizedGrowth": {
+      "order": 11,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10,
+        "grouping": true
+      }
+    },
+    "projectedGrowth": {
+      "order": 12,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10,
+        "grouping": true
+      }
+    }
+  }
+}

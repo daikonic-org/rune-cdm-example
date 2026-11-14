@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "DiscountPillar"
+  },
+  "columns": 3,
+  "fields": {
+    "startDate": {
+      "order": 0,
+      "span": 1
+    },
+    "maturityDate": {
+      "order": 1,
+      "span": 1
+    },
+    "parRate": {
+      "order": 2,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 6,
+        "grouping": true
+      }
+    },
+    "discountFactor": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 10,
+        "grouping": true
+      }
+    },
+    "forwardRate": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 8,
+        "grouping": true
+      }
+    },
+    "yearFraction": {
+      "order": 5,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 8,
+        "grouping": true
+      }
+    },
+    "calibrationResidual": {
+      "order": 6,
+      "span": 3,
+      "format": {
+        "kind": "decimal",
+        "precision": 14,
+        "grouping": true
+      }
+    }
+  }
+}

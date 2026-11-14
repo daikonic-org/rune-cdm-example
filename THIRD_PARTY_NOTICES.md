@@ -2,11 +2,11 @@
 
 The root workspace locks these released references.
 
-| Model | Release | Commit |
-| --- | --- | --- |
-| [FINOS Common Domain Model](https://github.com/finos/common-domain-model/tree/0f1f99aef829c23910476981bb91256544cb8569) | 7.9.0 | `0f1f99aef829c23910476981bb91256544cb8569` |
-| [Rune FpML](https://github.com/rosetta-models/rune-fpml/tree/ffda7dffda7cec97f9648123a1ba3cb8aad4e568) | 3.13.0 | `ffda7dffda7cec97f9648123a1ba3cb8aad4e568` |
-| [Rune DSL](https://github.com/finos/rune-dsl/tree/c0251abb7ed07b1f2d2fe248f0b7f3aa9df7c5f6) | 10.15.3 | `c0251abb7ed07b1f2d2fe248f0b7f3aa9df7c5f6` |
+| Model                                                                                                                   | Release | Commit                                     |
+| ----------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------ |
+| [FINOS Common Domain Model](https://github.com/finos/common-domain-model/tree/0f1f99aef829c23910476981bb91256544cb8569) | 7.9.0   | `0f1f99aef829c23910476981bb91256544cb8569` |
+| [Rune FpML](https://github.com/rosetta-models/rune-fpml/tree/ffda7dffda7cec97f9648123a1ba3cb8aad4e568)                  | 3.13.0  | `ffda7dffda7cec97f9648123a1ba3cb8aad4e568` |
+| [Rune DSL](https://github.com/finos/rune-dsl/tree/c0251abb7ed07b1f2d2fe248f0b7f3aa9df7c5f6)                             | 10.15.3 | `c0251abb7ed07b1f2d2fe248f0b7f3aa9df7c5f6` |
 
 The separate `host/` workspace retains CDM 7.8.0, Rune FpML 3.8.0,
 and Rune DSL 10.15.1 at the commits in its own lockfile.
@@ -57,3 +57,24 @@ notices, and provenance when redistributing model material or generated output.
 `umpirsky/currency-list` at commit `4ab0b8244b44aa41fc859809e90d6e9fe00ae59e`.
 The payload SHA-256 is `7d97c00a7f423b1758ff4022e4fabf6d2817600146a5b507bb062606149e4dbf`.
 The list includes historical currencies. [Upstream data](https://github.com/umpirsky/currency-list/blob/4ab0b8244b44aa41fc859809e90d6e9fe00ae59e/data/en/currency.json) · [Retained MIT license](resources/LICENSE-currency-list)
+
+## Official benchmark captures and additional product scenarios
+
+`model/benchmark-data/{sofr,sofr-index,sonia,sonia-index,estr,estr-index}.json`
+retain the exact downloaded official responses, source URLs, retrieval times and
+SHA-256 hashes. The sources are the Federal Reserve Bank of New York, the Bank
+of England and the European Central Bank. Their original data terms apply;
+the MIT license for authored workspace code does not relicense source responses.
+The SONIA notice supplied with the capture is retained in the materialized Rune
+provider. `captures.json` identifies all six immutable snapshots.
+
+`examples/floating-rate-note.json` derives the payout structure from the CDM
+material described above, with new synthetic note economics. The illustrative
+OIS quotes are original invented market scenarios, distinct from the official
+historical observations. `examples/sonia-facility.json` is original synthetic
+input conforming to the locked Rune FpML loan schema; it is not an upstream loan
+fixture or an executed transaction. See [market-data conventions](README.market-data.md).
+
+`model/calendar-holiday-lookup.rosetta` performs membership against the existing
+curated Strata day offsets without copying calendar data or changing weekends.
+It retains the same published calendar coverage and uses the shared decoder.
