@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "NoteAnalysis"
+  },
+  "columns": 3,
+  "fields": {
+    "asOf": {
+      "order": 0,
+      "span": 1
+    },
+    "currency": {
+      "order": 1,
+      "span": 1
+    },
+    "presentValue": {
+      "order": 2,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "netPresentValue": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "accruedInterest": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "settlementAmount": {
+      "order": 5,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "modelCleanPricePer100": {
+      "order": 6,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 6,
+        "grouping": true
+      }
+    },
+    "annualEffectiveYield": {
+      "order": 7,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 8,
+        "grouping": true
+      }
+    },
+    "quoteDv01": {
+      "order": 8,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 4,
+        "grouping": true
+      }
+    },
+    "yieldPriceResidual": {
+      "order": 9,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 12,
+        "grouping": true
+      }
+    },
+    "downPresentValue": {
+      "order": 10,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "upPresentValue": {
+      "order": 11,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "cashflows": {
+      "order": 12,
+      "span": 3
+    },
+    "curve": {
+      "order": 13,
+      "span": 3
+    },
+    "benchmarkCaptureId": {
+      "order": 14,
+      "span": 3
+    }
+  }
+}

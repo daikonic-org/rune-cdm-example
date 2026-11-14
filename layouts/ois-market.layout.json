@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "OisMarket"
+  },
+  "columns": 3,
+  "fields": {
+    "asOf": {
+      "order": 0,
+      "span": 1
+    },
+    "currency": {
+      "order": 1,
+      "span": 1
+    },
+    "benchmark": {
+      "order": 2,
+      "span": 1
+    },
+    "quoteSetId": {
+      "order": 3,
+      "span": 2
+    },
+    "illustrative": {
+      "order": 4,
+      "span": 1
+    },
+    "dayCount": {
+      "order": 5,
+      "span": 1
+    },
+    "quotes": {
+      "order": 6,
+      "span": 3
+    }
+  }
+}

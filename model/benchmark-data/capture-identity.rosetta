@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm.markets
+version "1.0.0"
+
+func BenchmarkCaptureSetId:
+  output:
+    id string (1..1)
+  set id: "74ac453b49dd1eb0ae6a33c0e58036a767ff19197b830fe3e489413b0876a707"

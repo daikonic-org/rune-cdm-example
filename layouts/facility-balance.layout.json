@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "FacilityBalance"
+  },
+  "columns": 3,
+  "fields": {
+    "date": {
+      "order": 0,
+      "span": 1
+    },
+    "scheduledBalance": {
+      "order": 1,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "availableCommitment": {
+      "order": 2,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "drawdowns": {
+      "order": 3,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    },
+    "scheduledRepayments": {
+      "order": 4,
+      "span": 1,
+      "format": {
+        "kind": "decimal",
+        "precision": 2,
+        "grouping": true
+      }
+    }
+  }
+}

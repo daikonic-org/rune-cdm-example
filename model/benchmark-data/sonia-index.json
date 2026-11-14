@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "series": "sonia-index",
+  "window": {
+    "startDate": "2026-11-02",
+    "endDate": "2026-11-09"
+  },
+  "source": {
+    "url": "https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=02%2FNov%2F2026&Dateto=09%2FNov%2F2026&SeriesCodes=IUDZOS2&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N",
+    "retrievedAt": "2026-11-14T04:27:47.243Z",
+    "sha256": "31b5976f2765701a2e82bdd6c3fed1d4e32866d9a05bfc0dabe68228739a0341"
+  },
+  "content": "DATE,IUDZOS2\r\n02 Nov 2026,121.87457567\r\n03 Nov 2026,121.88704761\r\n04 Nov 2026,121.89951749\r\n05 Nov 2026,121.91198631\r\n06 Nov 2026,121.92528774\r\n09 Nov 2026,121.96522445\r\n"
+}

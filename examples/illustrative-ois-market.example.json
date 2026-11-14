@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "illustrative-ois-market",
+  "name": "Illustrative dated USD OIS quotes",
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "OisMarket"
+  },
+  "payload": "examples/illustrative-ois-market.json",
+  "codec": "RUNE_JSON",
+  "provenance": {
+    "source": "Authored illustrative contract/curve terms. Official historical observations are separately pinned in model/benchmark-data/captures.json."
+  }
+}

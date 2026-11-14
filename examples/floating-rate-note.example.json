@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "floating-rate-note",
+  "name": "USD SOFR floating-rate note",
+  "type": {
+    "model": "local",
+    "namespace": "example.cdm.markets",
+    "kind": "Data",
+    "name": "FloatingRateNote"
+  },
+  "payload": "examples/floating-rate-note.json",
+  "codec": "RUNE_JSON",
+  "provenance": {
+    "source": "Authored illustrative contract/curve terms. Official historical observations are separately pinned in model/benchmark-data/captures.json."
+  }
+}

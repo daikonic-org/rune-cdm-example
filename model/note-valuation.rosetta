@@ -1,0 +1,265 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Daikonic contributors
+namespace example.cdm.markets
+version "1.0.0"
+
+import cdm.base.datetime.*
+import cdm.base.datetime.daycount.*
+import cdm.base.math.*
+import cdm.base.staticdata.asset.common.Security
+import cdm.observable.asset.*
+import cdm.observable.asset.calculatedrate.*
+import cdm.product.asset.*
+import cdm.product.asset.calculation.*
+import cdm.product.asset.floatingrate.*
+import cdm.product.common.schedule.*
+import example.cdm.ExamplePeriods
+import example.cdm.ExamplePaymentDate
+import rune.math.*
+import rune.studio.*
+
+type FloatingRateNote: <"A CDM security identity and its contractual interest-rate payout. This example supports constant principal, bullet redemption and unshifted overnight compounding.">
+  security Security (1..1)
+  payout InterestRatePayout (1..1)
+
+type NoteCashflow:
+  accrualStart date (1..1)
+  accrualEnd date (1..1)
+  paymentDate date (1..1)
+  yearFraction number (1..1)
+  notional number (1..1)
+  realizedGrowth number (1..1)
+  projectedGrowth number (1..1)
+  appliedRate number (1..1)
+  interest number (1..1)
+  principal number (1..1)
+  total number (1..1)
+  discountFactor number (1..1)
+  presentValue number (1..1)
+
+type NoteAnalysis:
+  asOf date (1..1)
+  currency string (1..1)
+  benchmarkCaptureId string (1..1)
+  curve DiscountCurve (1..1)
+  cashflows NoteCashflow (1..*)
+  accruedInterest number (1..1)
+  presentValue number (1..1)
+  modelCleanPricePer100 number (1..1)
+  settlementAmount number (1..1)
+  netPresentValue number (1..1)
+  annualEffectiveYield number (1..1)
+  yieldPriceResidual number (1..1)
+  quoteDv01 number (1..1) <"Central 1bp parallel OIS-quote sensitivity, recalibrating and reprojecting coupons as well as discounting.">
+  downPresentValue number (1..1)
+  upPresentValue number (1..1)
+
+func ObserveOvernightPeriod:
+  inputs:
+    index InterestRateIndex (1..1)
+    start date (1..1)
+    end date (1..1)
+    parameters FloatingRateCalculationParameters (1..1)
+    convention DayCountFractionEnum (1..1)
+  output:
+    details CalculatedRateDetails (1..1)
+  alias dates: GenerateObservationDatesAndWeights(parameters, empty,
+    CalculationPeriodBase { adjustedStartDate: start, adjustedEndDate: end }, empty)
+  alias weights: GenerateWeights([dates -> observationDates, end])
+  alias rates: dates -> observationDates extract d [IndexValueObservation(d, index)]
+  alias calculated: ApplyCompoundingFormula(ProcessObservations(parameters, rates), weights, YearFractionForOneDay(convention))
+  condition PositiveObservationWindow: end > start
+  condition UnshiftedObservationWindow:
+    parameters -> observationShiftCalculation is absent and parameters -> lookbackCalculation is absent
+      and parameters -> lockoutCalculation is absent
+      and (dates -> observationDates first) = start and (dates -> observationDates last) < end
+  set details: CalculatedRateDetails {
+    observations: CalculatedRateObservations {
+      observationDates: dates -> observationDates, weights: weights, observedRates: rates
+    },
+    growthFactor: calculated -> growthFactor, compoundedGrowth: calculated -> compoundedGrowth,
+    aggregateValue: calculated -> aggregateValue, aggregateWeight: calculated -> aggregateWeight,
+    calculatedRate: calculated -> calculatedRate, ...
+  }
+
+func NoteRealizedGrowth:
+  inputs:
+    leg InterestRatePayout (1..1)
+    start date (1..1)
+    end date (1..1)
+  output:
+    growth number (1..1)
+  alias specification: leg -> rateSpecification as FloatingRateSpecification
+  set growth: if start = end then 1 else
+    ObserveOvernightPeriod(specification -> rateOption, start, end,
+      specification -> calculationParameters, leg -> dayCountFraction) -> compoundedGrowth last
+
+func NotePeriodCashflow:
+  inputs:
+    leg InterestRatePayout (1..1)
+    period CalculationPeriodData (1..1)
+    curve DiscountCurve (1..1)
+    finalDate date (1..1)
+  output:
+    cashflow NoteCashflow (1..1)
+  alias base: Create_CalculationPeriodBase(period)
+  alias knownEnd: if curve -> asOf < period -> endDate then curve -> asOf else period -> endDate
+  alias knownGrowth: if period -> startDate < knownEnd then NoteRealizedGrowth(leg, period -> startDate, knownEnd) else 1
+  alias forwardStart: if period -> startDate > curve -> asOf then period -> startDate else curve -> asOf
+  alias projected: if period -> endDate > curve -> asOf
+    then DiscountOnDate(curve, forwardStart) / DiscountOnDate(curve, period -> endDate) else 1
+  alias fraction: MarketYearFraction(period -> startDate, period -> endDate, leg -> dayCountFraction)
+  alias details: ApplyFloatingRateSetting(leg, base, True, empty, empty,
+    FloatingRateSettingDetails { floatingRate: (knownGrowth * projected - 1) / fraction, ... })
+  alias notional: details -> calculationPeriodNotionalAmount -> value
+  alias payment: ExamplePaymentDate(leg, period)
+  alias principal: if period -> endDate = finalDate then notional else 0
+  alias total: details -> calculatedAmount + principal
+  alias discount: DiscountOnDate(curve, payment)
+  set cashflow: NoteCashflow {
+    accrualStart: period -> startDate, accrualEnd: period -> endDate, paymentDate: payment,
+    yearFraction: fraction, notional: notional, realizedGrowth: knownGrowth, projectedGrowth: projected,
+    appliedRate: details -> appliedRate, interest: details -> calculatedAmount,
+    principal: principal, total: total, discountFactor: discount, presentValue: total * discount
+  }
+
+func ProjectNoteCashflows:
+  inputs:
+    note FloatingRateNote (1..1)
+    curve DiscountCurve (1..1)
+  output:
+    cashflows NoteCashflow (1..*)
+  alias leg: note -> payout
+  alias specification: leg -> rateSpecification as FloatingRateSpecification
+  alias parameters: specification -> calculationParameters
+  alias periods: ExamplePeriods(leg)
+  alias finalDate: periods last -> endDate
+  condition LiveNote: curve -> asOf >= (periods first -> startDate) and curve -> asOf < finalDate
+  condition ConstantBulletPrincipal: leg -> priceQuantity -> quantitySchedule -> datedValue is absent
+  condition MatchingMarket:
+    leg -> priceQuantity -> quantitySchedule -> unit -> currency = curve -> currency
+      and (specification -> rateOption as FloatingRateIndex) -> floatingRateIndex = curve -> benchmark
+  condition UnshiftedOvernightNote:
+    parameters -> calculationMethod = CalculationMethodEnum -> Compounding
+      and parameters -> observationShiftCalculation is absent
+      and parameters -> lookbackCalculation is absent and parameters -> lockoutCalculation is absent
+      and parameters -> observationParameters is absent
+      and specification -> fallbackRate is absent and specification -> initialRate is absent
+  set cashflows: periods filter [endDate > curve -> asOf]
+    extract p [NotePeriodCashflow(leg, p, curve, finalDate)]
+
+func AccrueNoteInterest:
+  inputs:
+    note FloatingRateNote (1..1)
+    asOf date (1..1)
+  output:
+    accrued number (1..1)
+  alias leg: note -> payout
+  alias current: ExamplePeriods(leg) filter [startDate < asOf and endDate > asOf] then only-element
+  set accrued: if current is absent then 0 else NoteAccruedAmount(leg, current -> startDate, asOf)
+
+func NoteAccruedAmount:
+  inputs:
+    leg InterestRatePayout (1..1)
+    start date (1..1)
+    end date (1..1)
+  output:
+    amount number (1..1)
+  alias fraction: MarketYearFraction(start, end, leg -> dayCountFraction)
+  alias growth: NoteRealizedGrowth(leg, start, end)
+  alias details: ApplyFloatingRateSetting(leg,
+    CalculationPeriodBase { adjustedStartDate: start, adjustedEndDate: end }, True, empty, empty,
+    FloatingRateSettingDetails { floatingRate: (growth - 1) / fraction, ... })
+  set amount: details -> calculatedAmount
+
+func NotePresentValue:
+  inputs:
+    cashflows NoteCashflow (1..*)
+  output:
+    value number (1..1)
+  set value: cashflows -> presentValue sum
+
+func YieldPresentValue: <"Annual effective yield on fixed projected cashflows, ACT/365 Fixed times. This is not a vendor-specific bond street-convention yield.">
+  inputs:
+    cashflows NoteCashflow (1..*)
+    asOf date (1..1)
+    yield number (1..1)
+  output:
+    value number (1..1)
+  condition ValidYieldDomain: yield > -1
+  set value: cashflows extract c [c -> total * Exp(-1 * MarketYearFraction(asOf, c -> paymentDate, DayCountFractionEnum -> ACT_365_FIXED) * Log(1 + yield))] then sum
+
+func NoteYield:
+  inputs:
+    cashflows NoteCashflow (1..*)
+    asOf date (1..1)
+    dirtyAmount number (1..1)
+  output:
+    yield number (1..1)
+  condition PositiveYieldCashflows: cashflows -> total all > 0
+  condition YieldBracket:
+    dirtyAmount > 0 and YieldPresentValue(cashflows, asOf, -0.95) >= dirtyAmount
+      and YieldPresentValue(cashflows, asOf, 1) <= dirtyAmount
+  set yield: BisectNoteYield(cashflows, asOf, dirtyAmount, -0.95, 1, 60)
+
+func BisectNoteYield:
+  inputs:
+    cashflows NoteCashflow (1..*)
+    asOf date (1..1)
+    target number (1..1)
+    lower number (1..1)
+    upper number (1..1)
+    remaining int (1..1)
+  output:
+    yield number (1..1)
+  alias midpoint: (lower + upper) / 2
+  condition BoundedYieldIterations: remaining >= 0 and remaining <= 60
+  set yield: if remaining = 0 then midpoint
+    else if YieldPresentValue(cashflows, asOf, midpoint) > target
+    then BisectNoteYield(cashflows, asOf, target, midpoint, upper, remaining - 1)
+    else BisectNoteYield(cashflows, asOf, target, lower, midpoint, remaining - 1)
+
+func AssembleNoteAnalysis:
+  inputs:
+    curve DiscountCurve (1..1)
+    cashflows NoteCashflow (1..*)
+    accrued number (1..1)
+    cleanPricePer100 number (1..1)
+    downValue number (1..1)
+    upValue number (1..1)
+  output:
+    analysis NoteAnalysis (1..1)
+  alias notional: cashflows first -> notional
+  alias value: NotePresentValue(cashflows)
+  alias settlement: cleanPricePer100 / 100 * notional + accrued
+  alias yield: NoteYield(cashflows, curve -> asOf, settlement)
+  condition PositivePriceAndPrincipal: cleanPricePer100 > 0 and notional > 0
+  set analysis: NoteAnalysis {
+    asOf: curve -> asOf, currency: curve -> currency, benchmarkCaptureId: BenchmarkCaptureSetId(),
+    curve: curve, cashflows: cashflows, accruedInterest: accrued, presentValue: value,
+    modelCleanPricePer100: (value - accrued) / notional * 100,
+    settlementAmount: settlement, netPresentValue: value - settlement,
+    annualEffectiveYield: yield, yieldPriceResidual: YieldPresentValue(cashflows, curve -> asOf, yield) - settlement,
+    quoteDv01: (downValue - upValue) / 2, downPresentValue: downValue, upPresentValue: upValue
+  }
+
+func AnalyseFloatingRateNote:
+  [composition]
+  inputs:
+    note FloatingRateNote (1..1)
+    market OisMarket (1..1)
+    cleanPricePer100 number (1..1)
+  output:
+    analysis NoteAnalysis (1..1)
+  alias curve: BootstrapOisCurve(market)
+  alias cashflows: ProjectNoteCashflows(note, curve)
+  alias accrued: AccrueNoteInterest(note, market -> asOf)
+  alias downMarket: ShiftOisQuotes(market, -0.0001)
+  alias upMarket: ShiftOisQuotes(market, 0.0001)
+  alias downCurve: BootstrapOisCurve(downMarket)
+  alias upCurve: BootstrapOisCurve(upMarket)
+  alias downCashflows: ProjectNoteCashflows(note, downCurve)
+  alias upCashflows: ProjectNoteCashflows(note, upCurve)
+  alias downValue: NotePresentValue(downCashflows)
+  alias upValue: NotePresentValue(upCashflows)
+  set analysis: AssembleNoteAnalysis(curve, cashflows, accrued, cleanPricePer100, downValue, upValue)
